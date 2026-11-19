@@ -37,6 +37,20 @@ body { background:#F0F7FF; }
 .navinner a:first-child { border-bottom-color:#397FC4; }
 /* トップ見出し3行制限 */
 .hero h2 { display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:3; overflow:hidden; overflow-wrap:anywhere; line-height:1.55; }
+
+/* ニューステーマ別3コーナー：青色テーマとレスポンシブ表示 */
+.topic-section{margin:24px 0 28px}
+.topic-intro{color:#64768a;font-size:12px;margin:2px 0 12px}
+.topic-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.topic-card{min-width:0;background:#fff;border:1px solid #D8E6F4;border-top:3px solid #397FC4;border-radius:9px;padding:15px 15px 12px}
+.topic-card h3{margin:0 0 4px;color:#102c46;font-size:15px}
+.topic-card .topic-note{margin:0 0 10px;color:#64768a;font-size:11px;min-height:30px}
+.topic-card a{display:block;color:#193047;font-weight:700;font-size:12px;line-height:1.55;padding:10px 0;border-top:1px solid #eaf0f7;overflow-wrap:anywhere}
+.topic-card a:hover{color:#397FC4;text-decoration:underline}
+.topic-card .topic-meta{display:block;color:#788ba0;font-size:10px;font-weight:400;margin-top:3px}
+.topic-card .topic-empty{font-size:12px;color:#64768a;padding:8px 0}
+@media(max-width:850px){.topic-grid{grid-template-columns:1fr}}
+@media(min-width:581px) and (max-width:850px){.topic-card .topic-note{min-height:0}}
 </style></head><body>
 <div class="top"><div class="wrap"><span>外国人材・特定技能・育成就労の情報メディア</span><span>外国人材のニュース・採用情報</span></div></div>
 <header class="mast"><div class="wrap"><div class="brand"><span class="mark">Q</span><div><div class="logo">JINZA<i>iQ</i></div><div class="sub">外国人材の「今」がわかる。採用の「次」が見える。</div></div></div><a class="pillcta" href="#consult">企業向け採用相談（準備中）</a></div></header>
@@ -45,6 +59,15 @@ body { background:#F0F7FF; }
 <div class="wrap"><section class="intro"><div><div class="eyebrow">FOREIGN TALENT & BUSINESS NEWS</div><h1>外国人材の最新情報を、ビジネスの力に。</h1><p>ニュースで動向をつかむ。制度を理解する。採用の次の一手につなげる。</p></div></section>
 <div class="columns"><main><section class="hero"><div class="label">TOP STORY ／ 最新ニュース</div><div><h2 id="heroTitle">ニュースを読み込んでいます</h2><div class="foot" id="heroMeta"></div></div></section>
 <section class="section"><div class="ai"><b>JINZAiQについて</b><p>外国人材の採用・雇用に関するニュースをカテゴリー別に掲載しています。詳しい内容は各記事のリンクからご確認ください。</p></div></section>
+<section class="topic-section" aria-label="テーマ別ニュース">
+  <div class="sectiontitle"><h2>テーマ別に読む</h2><small>採用担当者向けピックアップ</small></div>
+  <p class="topic-intro">記事タイトルをもとに自動分類しています。詳しい情報は各媒体の元記事で確認してください。</p>
+  <div class="topic-grid">
+    <section class="topic-card"><h3>重要ニュース</h3><p class="topic-note">行政・政策・受入れ方針など</p><div id="topicImportant"></div></section>
+    <section class="topic-card"><h3>制度改正</h3><p class="topic-note">特定技能・育成就労・在留資格</p><div id="topicPolicy"></div></section>
+    <section class="topic-card"><h3>採用・雇用動向</h3><p class="topic-note">人材確保・企業の受入れ事例など</p><div id="topicHiring"></div></section>
+  </div>
+</section>
 <section class="section" id="latest"><div class="sectiontitle"><h2>最新ニュース・トピックス</h2><small id="totalCount"></small></div><div class="panel"><div class="controls" id="categories"></div><div class="searchrow"><input type="search" id="search" placeholder="ニュースのタイトル・媒体名で検索" aria-label="ニュース検索"><span class="count" id="matchedCount"></span></div><div id="articles"></div><div class="pager"><button id="prev">← 前へ</button><span id="paging"></span><button id="next">次へ →</button></div></div></section>
 <section class="section" id="guides"><div class="sectiontitle"><h2>外国人採用 お役立ちガイド</h2><small>今後公開予定</small></div><div class="guides"><div class="guide"><span class="tag">制度・基本</span><h3>特定技能とは？</h3><p>企業向けの制度解説記事を作成予定。</p></div><div class="guide"><span class="tag">採用実務</span><h3>外国人採用の費用と手続き</h3><p>手続きの流れを解説予定。</p></div><div class="guide"><span class="tag">定着支援</span><h3>外国人社員の受入れ準備</h3><p>教育・生活支援の実務を紹介予定。</p></div></div></section></main>
 <aside class="side"><div class="panel"><h3>最新ニュース 5件</h3><div id="latestFive"></div></div><div class="recruit"><span class="eyebrow" style="color:#78d8c8">FOR BUSINESS</span><h3>外国人材の採用を<br>検討している企業様へ</h3><p>採用相談の窓口は今後設置予定。現段階ではフォーム送信や紹介は行いません。</p><a class="pillcta" href="#consult">ご相談案内（準備中）</a></div><div class="panel"><h3>JINZAiQについて</h3><p>外国人材のニュース・実務情報を整理する個人運営メディアです。出典の元記事リンクを掲載しています。</p></div></aside></div>
@@ -129,6 +152,36 @@ function sameTopic(a,b) {
   if(orgX&&orgX===orgY&&event.test(x)&&event.test(y)&&similarity>=0.24)return true;
   // 冒頭表現の一致は単独では判断しない（誤削除防止）
   return x.slice(0,7)===y.slice(0,7)&&similarity>=0.57;
+}
+// 3つのテーマ別コーナー（元のニュース一覧やDBは変更しない）
+// 記事タイトルに基づく無料の目安判定。誤分類の可能性があります。
+function isPromotionOrIncident(x){
+  return /セミナー|ウェビナー|講座|説明会|参加募集|開催のお知らせ|キャンペーン|無料Web|逮捕|窃盗|殺人|詐欺|容疑|ひき逃げ|酒酔い|送検|起訴/.test(x.title)
+    || /PR TIMES/.test(x.source);
+}
+const topicDefinitions=[
+  {id:'topicImportant',test:x=>/政府|法務省|厚生労働省|入管庁|有識者会議|閣議|運用方針|受入れ方針|政策|規制|自治体/.test(x.title)},
+  {id:'topicPolicy',test:x=>/特定技能|育成就労|在留資格|技能実習/.test(x.title)&&/改正|見直し|施行|制度|運用|方針|分野|受入れ|受け入れ|閣議/.test(x.title)},
+  {id:'topicHiring',test:x=>/人材確保|採用|雇用|人手不足|受入れ|受け入れ|マッチング|就職|外国人材紹介/.test(x.title)}
+];
+const usedTopicArticles=[];
+for(const section of topicDefinitions){
+  const target=$('#'+section.id);
+  // 直近記事から条件に合うものを新着順で選ぶ
+  const candidates=news.filter(x=>section.test(x)&&!isPromotionOrIncident(x));
+  const selected=[];
+  for(const item of candidates){
+    if(usedTopicArticles.some(other=>sameTopic(item,other))||selected.some(other=>sameTopic(item,other)))continue;
+    selected.push(item);
+    if(selected.length>=2)break;
+  }
+  for(const item of selected){
+    usedTopicArticles.push(item);
+    const link=articleLink(item);
+    link.append(text('span',[item.published.slice(0,10),item.source].filter(Boolean).join(' ・ '),'topic-meta'));
+    target.append(link);
+  }
+  if(!selected.length)target.append(text('p','現在、該当する記事はありません。','topic-empty'));
 }
 const latest=$('#latestFive');
 const uniqueNews=[];
