@@ -132,7 +132,80 @@ if (news.length) {
   $('#heroMeta').textContent = '最新ニュースを準備しています';
 }
 
-const latest=$('#latestFive');for(let i=0;i<Math.min(news.length,5);i++){const a=document.createElement('a');a.className='rank';a.href=news[i].url||'#';if(news[i].url){a.target='_blank';a.rel='noopener noreferrer'}a.append(text('span',String(i+1).padStart(2,'0'),'num'));const box=text('span',news[i].title);box.append(text('div',news[i].category,'meta'));a.append(box);latest.append(a)}
+
+const latest = $('#latestFive');
+
+// タイトルの表記ゆれを整理
+function normalizeNewsTitle(title) {
+  return String(title || '')
+    .normalize('NFKC')
+    .toLowerCase()
+    .replace(/[\s「」『』【】（）()、。・!！?？:：\-―ー]/g, '');
+}
+
+// 2つの記事タイトルの類似度を比較
+function titleSimilarity(a, b) {
+  const x = normalizeNewsTitle(a);
+  const y = normalizeNewsTitle(b);
+
+  if (x === y) return 1;
+  if (x.length < 18 || y.length < 18) return 0;
+
+  // 冒頭が大きく異なる記事は別の記事として扱う
+  if (x.slice(0, 12) !== y.slice(0, 12)) return 0;
+
+  const pairs = s => {
+    const result = new Set();
+    for (let i = 0; i < s.length - 1; i++) {
+      result.add(s.slice(i, i + 2));
+    }
+    return result;
+  };
+
+  const aPairs = pairs(x);
+  const bPairs = pairs(y);
+  let common = 0;
+
+  for (const pair of aPairs) {
+    if (bPairs.has(pair)) common++;
+  }
+
+  return (2 * common) / (aPairs.size + bPairs.size);
+}
+
+// 類似記事を除外して最新5件を選ぶ
+const uniqueNews = [];
+
+for (const item of news) {
+  const duplicate = uniqueNews.some(
+    previous => titleSimilarity(item.title, previous.title) >= 0.78
+  );
+
+  if (!duplicate) uniqueNews.push(item);
+  if (uniqueNews.length >= 5) break;
+}
+
+// 選ばれた5件を表示
+for (let i = 0; i < uniqueNews.length; i++) {
+  const x = uniqueNews[i];
+  const a = document.createElement('a');
+
+  a.className = 'rank';
+  a.href = x.url || '#';
+
+  if (x.url) {
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+  }
+
+  a.append(text('span', String(i + 1).padStart(2, '0'), 'num'));
+
+  const box = text('span', x.title);
+  box.append(text('div', x.category, 'meta'));
+  a.append(box);
+  latest.append(a);
+}
+
 $('#generatedAt').textContent='最終更新：'+generatedAt+' JST';setCategory('すべて');
 </script></body></html>'''
 
