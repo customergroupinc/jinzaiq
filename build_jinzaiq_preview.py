@@ -66,6 +66,16 @@ body { background: #F0F7FF; }
 .navinner a:first-child {
   border-bottom-color: #397FC4;
 }
+
+/* トップニュースのタイトルを最大3行に制限 */
+.hero h2 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  line-height: 1.55;
+}
 </style></head><body>
 <div class="top"><div class="wrap"><span>外国人材・特定技能・育成就労の情報メディア</span><span>外国人材のニュース・採用情報</span></div></div>
 <header class="mast"><div class="wrap"><div class="brand"><span class="mark">Q</span><div><div class="logo">JINZA<i>iQ</i></div><div class="sub">外国人材の「今」がわかる。採用の「次」が見える。</div></div></div><a class="pillcta" href="#consult">企業向け採用相談（準備中）</a></div></header>
