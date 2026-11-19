@@ -15,10 +15,6 @@ HTML = r'''<!doctype html>
 <html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>JINZAiQ｜外国人材のニュース・採用情報</title>
 <meta name="description" content="外国人材の制度・採用・雇用に関するニュースを探せるJINZAiQです。">
-/* 記事一覧の左側の◇マークを非表示 */
-.item .thumb {
-  display: none;
-}
 <style>
 :root{--navy:#102c46;--ink:#193047;--muted:#64768a;--green:#18aa94;--line:#e0e7ed;--bg:#f3f6f9;--white:#fff}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--ink);background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans JP","Hiragino Kaku Gothic ProN",Meiryo,sans-serif;line-height:1.65}a{color:inherit;text-decoration:none}a:hover{color:#0a9584}.wrap{width:min(1160px,calc(100% - 36px));margin:auto}
@@ -55,6 +51,10 @@ body { background:#F0F7FF; }
 .topic-card .topic-empty{font-size:12px;color:#64768a;padding:8px 0}
 @media(max-width:850px){.topic-grid{grid-template-columns:1fr}}
 @media(min-width:581px) and (max-width:850px){.topic-card .topic-note{min-height:0}}
+/* 記事一覧の左側の◇マークを非表示 */
+.item .thumb {
+  display: none;
+}
 </style></head><body>
 <div class="top"><div class="wrap"><span>外国人材・特定技能・育成就労の情報メディア</span><span>外国人材のニュース・採用情報</span></div></div>
 <header class="mast"><div class="wrap"><div class="brand"><span class="mark">Q</span><div><div class="logo">JINZA<i>iQ</i></div><div class="sub">外国人材の「今」がわかる。採用の「次」が見える。</div></div></div><a class="pillcta" href="#consult">企業向け採用相談（準備中）</a></div></header>
