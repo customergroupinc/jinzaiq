@@ -86,28 +86,38 @@ function render(){const hits=filtered();const pages=Math.max(1,Math.ceil(hits.le
 function setCategory(c){selected=c;page=1;document.querySelectorAll('[data-cat]').forEach(b=>b.classList.toggle('active',b.dataset.cat===c));render()}
 const chips=$('#categories');for(const c of cats){const btn=text('button',c,'chip');btn.type='button';btn.dataset.cat=c;btn.addEventListener('click',()=>setCategory(c));chips.append(btn)}
 $('#search').addEventListener('input',()=>{page=1;render()});$('#prev').addEventListener('click',()=>{page--;render();$('#latest').scrollIntoView()});$('#next').addEventListener('click',()=>{page++;render();$('#latest').scrollIntoView()});document.querySelectorAll('[data-nav-category]').forEach(a=>a.addEventListener('click',()=>setCategory(a.dataset.navCategory)));
-// トップ記事は直近の候補から、採用実務への関連性で選ぶ。
-// タイトルだけの無料ルール判定。宣伝・事件は大きく減点。
-function newsScore(x) {
+// 日本国内の採用実務との関連性を重視。タイトルと出典のみで判定する目安です。
+// 海外のみのニュースは特集枠から外しやすくするが、一覧からは削除しません。
+function isForeignOnly(x) {
+  const title=String(x.title||'');
+  const source=String(x.source||'');
+  const overseas=/(?:韓国|中国|米国|アメリカ|英国|イギリス|ドイツ|フランス|カナダ|オーストラリア|台湾|フィリピン|インドネシア|ベトナム)(?:政府|企業|中小企業|労働省|労働者|国内|の雇用|の制度|の永住権)|グリーンカード|米政権|米労働省|韓国政府|中国政府|海外の労働市場/;
+  const japaneseContext=/日本国内|日本企業|日本で|日本への|日本向け|日本政府|日本の受入れ|日本の受け入れ|日本の雇用|日本の採用|訪日|来日|在留資格|出入国在留管理庁|入管庁|特定技能|育成就労|技能実習|外国人材/;
+  return overseas.test(title) && !japaneseContext.test(title) && !/日本経済新聞|厚生労働省|法務省/.test(source);
+}
+function domesticScore(x) {
   const t=String(x.title||'');
   const source=String(x.source||'');
   let score=0;
-  if (/政府|法務省|厚生労働省|出入国在留管理庁|閣議|有識者会議/.test(t)) score+=7;
-  if (/改正|見直し|新制度|施行|受入れ方針|運用方針|対象分野|上限/.test(t)) score+=7;
-  if (/特定技能|育成就労|在留資格/.test(t)) score+=6;
-  if (/採用|人材確保|雇用|受入れ|受け入れ|人手不足|人材紹介|マッチング/.test(t)) score+=4;
-  if (/無料.*セミナー|セミナー|ウェビナー|開催のお知らせ|参加者募集|キャンペーン|PR TIMES|プレスリリース|広告|講座|説明会|求人募集のコツ/.test(t)) score-=30;
-  if (/PR TIMES|プレスリリース/.test(source)) score-=20;
-  if (/逮捕|窃盗|強盗|殺人|詐欺|容疑|ひき逃げ|酒酔い運転|暴行|傷害|事故|送検|起訴/.test(t)) score-=35;
-  if (t.length>95) score-=3;
+  if (/出入国在留管理庁|入管庁|厚生労働省|法務省|日本政府|閣議決定|政府有識者会議/.test(t)) score+=20;
+  else if (/政府|有識者会議|自治体|都道府県|市役所|県庁/.test(t)) score+=5;
+  if (/特定技能|育成就労|技能実習|在留資格/.test(t)) score+=10;
+  if (/改正|見直し|施行|運用方針|受入れ方針|受け入れ方針|分野追加|対象分野|受入れ上限/.test(t)) score+=12;
+  if (/日本企業|国内企業|国内の|日本国内|採用|外国人雇用|人材確保|人手不足|雇用実態|受入れ事例|受け入れ事例|マッチング/.test(t)) score+=7;
+  if (/日本経済新聞|NHK|厚生労働省|法務省|出入国在留管理庁|国土交通省/.test(source)) score+=3;
+  if (/無料.*セミナー|セミナー|ウェビナー|開催のお知らせ|参加者募集|キャンペーン|説明会|講座|広告|プレスリリース/.test(t)) score-=32;
+  if (/PR TIMES|プレスリリース/.test(source)) score-=18;
+  if (/逮捕|窃盗|強盗|殺人|詐欺|容疑|ひき逃げ|酒酔い|暴行|傷害|送検|起訴|空き家.*盗/.test(t)) score-=35;
+  if (isForeignOnly(x)) score-=35;
+  if (t.length>110) score-=3;
   return score;
 }
+// 日本の制度・採用関連が候補にあれば、その中から最重要の1件を選ぶ。
 if(news.length) {
-  const candidates=news.slice(0, 60);
-  const editorial=candidates.filter(x => newsScore(x)>=0);
-  const pool=editorial.length?editorial:candidates;
-  // 同点ならデータの新着順を維持
-  const feature=pool.reduce((best,item)=>newsScore(item)>newsScore(best)?item:best,pool[0]);
+  const candidates=news.slice(0,80);
+  const suitable=candidates.filter(x=>domesticScore(x)>0&&!isForeignOnly(x));
+  const pool=suitable.length?suitable:candidates;
+  const feature=pool.reduce((best,item)=>domesticScore(item)>domesticScore(best)?item:best,pool[0]);
   const hero=$('#heroTitle');hero.replaceChildren(articleLink(feature));
   hero.querySelector('a').title=feature.title;
   $('#heroMeta').textContent=[feature.category,feature.source,feature.published.slice(0,16).replace('T',' ')].filter(Boolean).join(' ・ ');
@@ -159,16 +169,18 @@ function isPromotionOrIncident(x){
   return /セミナー|ウェビナー|講座|説明会|参加募集|開催のお知らせ|キャンペーン|無料Web|逮捕|窃盗|殺人|詐欺|容疑|ひき逃げ|酒酔い|送検|起訴/.test(x.title)
     || /PR TIMES/.test(x.source);
 }
+// 国内との関係が明確でない記事は特集枠では低く評価する。
 const topicDefinitions=[
-  {id:'topicImportant',test:x=>/政府|法務省|厚生労働省|入管庁|有識者会議|閣議|運用方針|受入れ方針|政策|規制|自治体/.test(x.title)},
-  {id:'topicPolicy',test:x=>/特定技能|育成就労|在留資格|技能実習/.test(x.title)&&/改正|見直し|施行|制度|運用|方針|分野|受入れ|受け入れ|閣議/.test(x.title)},
-  {id:'topicHiring',test:x=>/人材確保|採用|雇用|人手不足|受入れ|受け入れ|マッチング|就職|外国人材紹介/.test(x.title)}
+  {id:'topicImportant',test:x=>/政府|法務省|厚生労働省|入管庁|有識者会議|閣議|運用方針|受入れ方針|受け入れ方針|政策|規制|自治体|制度改正/.test(x.title),minScore:18},
+  {id:'topicPolicy',test:x=>/特定技能|育成就労|在留資格|技能実習/.test(x.title)&&/改正|見直し|施行|制度|運用|方針|分野|受入れ|受け入れ|閣議/.test(x.title),minScore:12},
+  {id:'topicHiring',test:x=>/人材確保|採用|雇用|人手不足|受入れ|受け入れ|マッチング|就職|外国人材紹介/.test(x.title),minScore:4}
 ];
 const usedTopicArticles=[];
 for(const section of topicDefinitions){
   const target=$('#'+section.id);
-  // 直近記事から条件に合うものを新着順で選ぶ
-  const candidates=news.filter(x=>section.test(x)&&!isPromotionOrIncident(x));
+  const candidates=news
+    .filter(x=>section.test(x)&&!isPromotionOrIncident(x)&&!isForeignOnly(x)&&domesticScore(x)>=section.minScore)
+    .sort((a,b)=>domesticScore(b)-domesticScore(a)); // 同点は元の新着順を保持
   const selected=[];
   for(const item of candidates){
     if(usedTopicArticles.some(other=>sameTopic(item,other))||selected.some(other=>sameTopic(item,other)))continue;
