@@ -23,59 +23,20 @@ HTML = r'''<!doctype html>
 @media(max-width:850px){.columns{grid-template-columns:1fr}.side{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.side>*{margin-bottom:0!important}.side .panel:first-child{grid-column:span 2}.guides{grid-template-columns:1fr 1fr}}
 @media(max-width:580px){.mast .wrap{padding:17px 0}.logo{font-size:24px}.mast .pillcta{display:none}.ticker span:last-child{display:none}.intro{padding:24px 0 18px}.hero{padding:22px;min-height:240px}.item{gap:10px;padding:15px}.thumb{width:58px;min-width:58px;height:64px;font-size:22px}.item h3{font-size:14px}.side{grid-template-columns:1fr}.side .panel:first-child{grid-column:auto}.guides{grid-template-columns:1fr}.company{align-items:start;flex-direction:column}.count{display:none}}
 
-/* JINZAiQ ライトブルーテーマ */
-:root {
-  --green: #397FC4;
-  --bg: #F0F7FF;
-  --line: #D8E6F4;
-}
-
-body { background: #F0F7FF; }
-
-.ticker {
-  background: #E3F1FF;
-  border-bottom-color: #C7E1F9;
-}
-.tick, .chip.active {
-  background: #397FC4;
-  border-color: #397FC4;
-}
-.ai {
-  background: #EAF4FF;
-  border-left-color: #397FC4;
-}
-.pillcta {
-  background: #78B8F2;
-  color: #102C46;
-}
-.mark {
-  border-color: #89C8FF;
-  color: #89C8FF;
-}
-.logo i, .hero .label {
-  color: #94CFFF;
-}
-.thumb {
-  background: #E4F1FF;
-  color: #397FC4;
-}
-.category, .num, .guide .tag,
-.eyebrow, .navinner a:first-child {
-  color: #397FC4;
-}
-.navinner a:first-child {
-  border-bottom-color: #397FC4;
-}
-
-/* トップニュースのタイトルを最大3行に制限 */
-.hero h2 {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
-  overflow: hidden;
-  overflow-wrap: anywhere;
-  line-height: 1.55;
-}
+/* JINZAiQ ライトブルーテーマ（既存デザインを保持） */
+:root { --green:#397FC4; --bg:#F0F7FF; --line:#D8E6F4; }
+body { background:#F0F7FF; }
+.ticker { background:#E3F1FF; border-bottom-color:#C7E1F9; }
+.tick,.chip.active { background:#397FC4; border-color:#397FC4; }
+.ai { background:#EAF4FF; border-left-color:#397FC4; }
+.pillcta { background:#78B8F2; color:#102C46; }
+.mark { border-color:#89C8FF; color:#89C8FF; }
+.logo i,.hero .label { color:#94CFFF; }
+.thumb { background:#E4F1FF; color:#397FC4; }
+.category,.num,.guide .tag,.eyebrow,.navinner a:first-child { color:#397FC4; }
+.navinner a:first-child { border-bottom-color:#397FC4; }
+/* トップ見出し3行制限 */
+.hero h2 { display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:3; overflow:hidden; overflow-wrap:anywhere; line-height:1.55; }
 </style></head><body>
 <div class="top"><div class="wrap"><span>外国人材・特定技能・育成就労の情報メディア</span><span>外国人材のニュース・採用情報</span></div></div>
 <header class="mast"><div class="wrap"><div class="brand"><span class="mark">Q</span><div><div class="logo">JINZA<i>iQ</i></div><div class="sub">外国人材の「今」がわかる。採用の「次」が見える。</div></div></div><a class="pillcta" href="#consult">企業向け採用相談（準備中）</a></div></header>
@@ -86,7 +47,7 @@ body { background: #F0F7FF; }
 <section class="section"><div class="ai"><b>JINZAiQについて</b><p>外国人材の採用・雇用に関するニュースをカテゴリー別に掲載しています。詳しい内容は各記事のリンクからご確認ください。</p></div></section>
 <section class="section" id="latest"><div class="sectiontitle"><h2>最新ニュース・トピックス</h2><small id="totalCount"></small></div><div class="panel"><div class="controls" id="categories"></div><div class="searchrow"><input type="search" id="search" placeholder="ニュースのタイトル・媒体名で検索" aria-label="ニュース検索"><span class="count" id="matchedCount"></span></div><div id="articles"></div><div class="pager"><button id="prev">← 前へ</button><span id="paging"></span><button id="next">次へ →</button></div></div></section>
 <section class="section" id="guides"><div class="sectiontitle"><h2>外国人採用 お役立ちガイド</h2><small>今後公開予定</small></div><div class="guides"><div class="guide"><span class="tag">制度・基本</span><h3>特定技能とは？</h3><p>企業向けの制度解説記事を作成予定。</p></div><div class="guide"><span class="tag">採用実務</span><h3>外国人採用の費用と手続き</h3><p>手続きの流れを解説予定。</p></div><div class="guide"><span class="tag">定着支援</span><h3>外国人社員の受入れ準備</h3><p>教育・生活支援の実務を紹介予定。</p></div></div></section></main>
-<aside class="side"><div class="panel"><h3>最新ニュース 5件</h3><div id="latestFive"></div></div><div class="recruit"><span class="eyebrow" style="color:#78d8c8">FOR BUSINESS</span><h3>外国人材の採用を<br>検討している企業様へ</h3><p>採用相談の窓口は今後設置予定。現段階ではフォーム送信や紹介は行いません。</p><a class="pillcta" href="#consult">ご相談案内（準備中）</a></div><div class="panel"><h3>JINZAiQについて</h3><p>外国人材のニュース・実務情報を整理する個人運営メディアの開発版です。出典の元記事リンクを掲載しています。</p></div></aside></div>
+<aside class="side"><div class="panel"><h3>最新ニュース 5件</h3><div id="latestFive"></div></div><div class="recruit"><span class="eyebrow" style="color:#78d8c8">FOR BUSINESS</span><h3>外国人材の採用を<br>検討している企業様へ</h3><p>採用相談の窓口は今後設置予定。現段階ではフォーム送信や紹介は行いません。</p><a class="pillcta" href="#consult">ご相談案内（準備中）</a></div><div class="panel"><h3>JINZAiQについて</h3><p>外国人材のニュース・実務情報を整理する個人運営メディアです。出典の元記事リンクを掲載しています。</p></div></aside></div>
 <section class="company" id="consult"><div><div class="eyebrow" style="color:#7de1cd">FOREIGN TALENT RECRUITMENT</div><h2>外国人材の採用を検討している企業様へ</h2><p>企業向け採用相談窓口は公開準備中です。個人情報の送信機能はありません。</p></div><span class="pillcta">公開準備中</span></section></div>
 <footer class="footer">JINZAiQ ／ RSS記事の出典・リンクを掲載 ／ 個別ニュースの正確性は元記事でご確認ください</footer>
 <script>
@@ -102,131 +63,87 @@ function render(){const hits=filtered();const pages=Math.max(1,Math.ceil(hits.le
 function setCategory(c){selected=c;page=1;document.querySelectorAll('[data-cat]').forEach(b=>b.classList.toggle('active',b.dataset.cat===c));render()}
 const chips=$('#categories');for(const c of cats){const btn=text('button',c,'chip');btn.type='button';btn.dataset.cat=c;btn.addEventListener('click',()=>setCategory(c));chips.append(btn)}
 $('#search').addEventListener('input',()=>{page=1;render()});$('#prev').addEventListener('click',()=>{page--;render();$('#latest').scrollIntoView()});$('#next').addEventListener('click',()=>{page++;render();$('#latest').scrollIntoView()});document.querySelectorAll('[data-nav-category]').forEach(a=>a.addEventListener('click',()=>setCategory(a.dataset.navCategory)));
-
+// トップ記事は直近の候補から、採用実務への関連性で選ぶ。
+// タイトルだけの無料ルール判定。宣伝・事件は大きく減点。
 function newsScore(x) {
-  const title = x.title || '';
-  let score = 0;
-
-  // 制度変更・政府発表を優先
-  if (/法改正|制度改正|制度変更|閣議決定|政府方針|運用方針|省令|施行/.test(title)) score += 10;
-
-  // 外国人材の受入れ制度
-  if (/特定技能|育成就労|在留資格/.test(title)) score += 5;
-
-  // 企業の採用・雇用に関する情報
-  if (/人材確保|採用|雇用|人手不足|受け入れ|受入れ/.test(title)) score += 3;
-
-  // 事件・事故や宣伝記事はトップでの優先度を下げる
-  if (/逮捕|窃盗|強盗|殺人|詐欺|事故|容疑/.test(title)) score -= 15;
-  if (/セミナー|ウェビナー|キャンペーン|PR TIMES/.test(title)) score -= 3;
-
+  const t=String(x.title||'');
+  const source=String(x.source||'');
+  let score=0;
+  if (/政府|法務省|厚生労働省|出入国在留管理庁|閣議|有識者会議/.test(t)) score+=7;
+  if (/改正|見直し|新制度|施行|受入れ方針|運用方針|対象分野|上限/.test(t)) score+=7;
+  if (/特定技能|育成就労|在留資格/.test(t)) score+=6;
+  if (/採用|人材確保|雇用|受入れ|受け入れ|人手不足|人材紹介|マッチング/.test(t)) score+=4;
+  if (/無料.*セミナー|セミナー|ウェビナー|開催のお知らせ|参加者募集|キャンペーン|PR TIMES|プレスリリース|広告|講座|説明会|求人募集のコツ/.test(t)) score-=30;
+  if (/PR TIMES|プレスリリース/.test(source)) score-=20;
+  if (/逮捕|窃盗|強盗|殺人|詐欺|容疑|ひき逃げ|酒酔い運転|暴行|傷害|事故|送検|起訴/.test(t)) score-=35;
+  if (t.length>95) score-=3;
   return score;
 }
-
-if (news.length) {
-  // 新しい50件の中から、重要度が最も高い記事を選ぶ
-  const candidates = news.slice(0, 50);
-  const x = candidates.reduce(
-    (best, item) => newsScore(item) > newsScore(best) ? item : best,
-    candidates[0]
-  );
-
-  const hero = $('#heroTitle');
-  hero.replaceChildren(articleLink(x));
-  $('#heroMeta').textContent = [
-    x.category, x.source,
-    x.published.slice(0,16).replace('T',' ')
-  ].filter(Boolean).join(' ・ ');
-} else {
-  $('#heroTitle').textContent = 'まだニュースがありません';
-  $('#heroMeta').textContent = '最新ニュースを準備しています';
+if(news.length) {
+  const candidates=news.slice(0, 60);
+  const editorial=candidates.filter(x => newsScore(x)>=0);
+  const pool=editorial.length?editorial:candidates;
+  // 同点ならデータの新着順を維持
+  const feature=pool.reduce((best,item)=>newsScore(item)>newsScore(best)?item:best,pool[0]);
+  const hero=$('#heroTitle');hero.replaceChildren(articleLink(feature));
+  hero.querySelector('a').title=feature.title;
+  $('#heroMeta').textContent=[feature.category,feature.source,feature.published.slice(0,16).replace('T',' ')].filter(Boolean).join(' ・ ');
+}else {
+  $('#heroTitle').textContent='まだニュースがありません';
+  $('#heroMeta').textContent='最新ニュースを準備しています';
 }
 
-
-const latest = $('#latestFive');
-
-// タイトルの表記ゆれを整理
+// 右サイドバーのみ同じ話題の連続掲載を抑える。DBもメイン一覧も削除しない。
 function normalizeNewsTitle(title) {
-  return String(title || '')
-    .normalize('NFKC')
-    .toLowerCase()
-    .replace(/[\s「」『』【】（）()、。・!！?？:：\-―ー]/g, '');
+  return String(title||'').normalize('NFKC').toLowerCase()
+    .replace(/[\s「」『』【】（）()、。・!！?？:：\-―ー\/\[\]［］]/g,'');
 }
-
-// 2つの記事タイトルの類似度を比較
-
-function titleSimilarity(a, b) {
-  const x = normalizeNewsTitle(a);
-  const y = normalizeNewsTitle(b);
-
-  if (x === y) return 1;
-  if (x.length < 12 || y.length < 12) return 0;
-
-  // タイトルを3文字ずつに分けて比較
-  function makePairs(s) {
-    const result = new Set();
-    for (let i = 0; i < s.length - 2; i++) {
-      result.add(s.slice(i, i + 3));
-    }
-    return result;
-  }
-
-  const setA = makePairs(x);
-  const setB = makePairs(y);
-
-  let common = 0;
-  for (const part of setA) {
-    if (setB.has(part)) common++;
-  }
-
-  const similarity =
-    (2 * common) / (setA.size + setB.size);
-
-  // 同じ組織名などで始まり、内容も似ている記事
-  const sameBeginning = x.slice(0, 5) === y.slice(0, 5);
-
-  if (sameBeginning && similarity >= 0.45) {
-    return 0.9;
-  }
-
-  // タイトル全体が非常によく似ている記事
-  return similarity >= 0.85 ? similarity : 0;
+function trigrams(s) {
+  const parts=new Set();
+  for(let i=0;i<s.length-2;i++)parts.add(s.slice(i,i+3));
+  return parts;
 }
-
-
-// 類似記事を除外して最新5件を選ぶ
-const uniqueNews = [];
-
-for (const item of news) {
-  const duplicate = uniqueNews.some(
-    previous => titleSimilarity(item.title, previous.title) >= 0.78
-  );
-
-  if (!duplicate) uniqueNews.push(item);
-  if (uniqueNews.length >= 5) break;
+function threeGramSimilarity(a,b) {
+  const aa=trigrams(a),bb=trigrams(b);
+  if(!aa.size||!bb.size)return 0;
+  let common=0;
+  for(const part of aa)if(bb.has(part))common++;
+  return 2*common/(aa.size+bb.size);
 }
-
-// 選ばれた5件を表示
-for (let i = 0; i < uniqueNews.length; i++) {
-  const x = uniqueNews[i];
-  const a = document.createElement('a');
-
-  a.className = 'rank';
-  a.href = x.url || '#';
-
-  if (x.url) {
-    a.target = '_blank';
-    a.rel = 'noopener noreferrer';
-  }
-
-  a.append(text('span', String(i + 1).padStart(2, '0'), 'num'));
-
-  const box = text('span', x.title);
-  box.append(text('div', x.category, 'meta'));
-  a.append(box);
-  latest.append(a);
+function sameTopic(a,b) {
+  const x=normalizeNewsTitle(a.title),y=normalizeNewsTitle(b.title);
+  if(x===y)return true;
+  if(x.length<12||y.length<12)return false;
+  // 公開日が大きく異なる場合は別ニュースとして扱う
+  const ta=Date.parse(a.published),tb=Date.parse(b.published);
+  if(Number.isFinite(ta)&&Number.isFinite(tb)&&Math.abs(ta-tb)>3*86400000)return false;
+  const similarity=threeGramSimilarity(x,y);
+  if(similarity>=0.82)return true;
+  // 同一組織による同種類のイベントなら、言い換えの重複を検出
+  const event=/研修会|講習会|説明会|セミナー|会議|シンポジウム|協議会/;
+  const coreOrg=s=>{
+    const m=s.match(/^.{2,24}?(?:協|組合|協会|連合会|大学|株式会社|会社|県庁|市役所|自治体|機構|グループ)/);
+    return m?m[0]:'';
+  };
+  const orgX=coreOrg(x),orgY=coreOrg(y);
+  if(orgX&&orgX===orgY&&event.test(x)&&event.test(y)&&similarity>=0.24)return true;
+  // 冒頭表現の一致は単独では判断しない（誤削除防止）
+  return x.slice(0,7)===y.slice(0,7)&&similarity>=0.57;
 }
-
+const latest=$('#latestFive');
+const uniqueNews=[];
+for(const item of news) {
+  if(!uniqueNews.some(previous=>sameTopic(item,previous)))uniqueNews.push(item);
+  if(uniqueNews.length>=5)break;
+}
+for(let i=0;i<uniqueNews.length;i++) {
+  const x=uniqueNews[i];const a=document.createElement('a');
+  a.className='rank';a.href=x.url||'#';
+  if(x.url){a.target='_blank';a.rel='noopener noreferrer';}
+  a.append(text('span',String(i+1).padStart(2,'0'),'num'));
+  const box=text('span',x.title);box.append(text('div',x.category,'meta'));
+  a.append(box);latest.append(a);
+}
 $('#generatedAt').textContent='最終更新：'+generatedAt+' JST';setCategory('すべて');
 </script></body></html>'''
 
