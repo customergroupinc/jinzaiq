@@ -48,7 +48,46 @@ function render(){const hits=filtered();const pages=Math.max(1,Math.ceil(hits.le
 function setCategory(c){selected=c;page=1;document.querySelectorAll('[data-cat]').forEach(b=>b.classList.toggle('active',b.dataset.cat===c));render()}
 const chips=$('#categories');for(const c of cats){const btn=text('button',c,'chip');btn.type='button';btn.dataset.cat=c;btn.addEventListener('click',()=>setCategory(c));chips.append(btn)}
 $('#search').addEventListener('input',()=>{page=1;render()});$('#prev').addEventListener('click',()=>{page--;render();$('#latest').scrollIntoView()});$('#next').addEventListener('click',()=>{page++;render();$('#latest').scrollIntoView()});document.querySelectorAll('[data-nav-category]').forEach(a=>a.addEventListener('click',()=>setCategory(a.dataset.navCategory)));
-if(news.length){const x=news[0];const hero=$('#heroTitle');hero.replaceChildren(articleLink(x));$('#heroMeta').textContent=[x.category,x.source,x.published.slice(0,16).replace('T',' ')].filter(Boolean).join(' ・ ')}else{$('#heroTitle').textContent='まだニュースがありません';$('#heroMeta').textContent='collector.py を実行するとここに最新記事が表示されます'}
+
+function newsScore(x) {
+  const title = x.title || '';
+  let score = 0;
+
+  // 制度変更・政府発表を優先
+  if (/法改正|制度改正|制度変更|閣議決定|政府方針|運用方針|省令|施行/.test(title)) score += 10;
+
+  // 外国人材の受入れ制度
+  if (/特定技能|育成就労|在留資格/.test(title)) score += 5;
+
+  // 企業の採用・雇用に関する情報
+  if (/人材確保|採用|雇用|人手不足|受け入れ|受入れ/.test(title)) score += 3;
+
+  // 事件・事故や宣伝記事はトップでの優先度を下げる
+  if (/逮捕|窃盗|強盗|殺人|詐欺|事故|容疑/.test(title)) score -= 15;
+  if (/セミナー|ウェビナー|キャンペーン|PR TIMES/.test(title)) score -= 3;
+
+  return score;
+}
+
+if (news.length) {
+  // 新しい50件の中から、重要度が最も高い記事を選ぶ
+  const candidates = news.slice(0, 50);
+  const x = candidates.reduce(
+    (best, item) => newsScore(item) > newsScore(best) ? item : best,
+    candidates[0]
+  );
+
+  const hero = $('#heroTitle');
+  hero.replaceChildren(articleLink(x));
+  $('#heroMeta').textContent = [
+    x.category, x.source,
+    x.published.slice(0,16).replace('T',' ')
+  ].filter(Boolean).join(' ・ ');
+} else {
+  $('#heroTitle').textContent = 'まだニュースがありません';
+  $('#heroMeta').textContent = '最新ニュースを準備しています';
+}
+
 const latest=$('#latestFive');for(let i=0;i<Math.min(news.length,5);i++){const a=document.createElement('a');a.className='rank';a.href=news[i].url||'#';if(news[i].url){a.target='_blank';a.rel='noopener noreferrer'}a.append(text('span',String(i+1).padStart(2,'0'),'num'));const box=text('span',news[i].title);box.append(text('div',news[i].category,'meta'));a.append(box);latest.append(a)}
 $('#generatedAt').textContent='最終更新：'+generatedAt+' JST';setCategory('すべて');
 </script></body></html>'''
