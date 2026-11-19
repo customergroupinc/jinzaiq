@@ -22,6 +22,50 @@ HTML = r'''<!doctype html>
 .intro{padding:31px 0 23px;display:flex;align-items:end;justify-content:space-between;gap:18px}.eyebrow{letter-spacing:.13em;font-size:10px;color:#148779;font-weight:850}.intro h1{font-size:clamp(24px,3vw,34px);line-height:1.4;margin:7px 0}.intro p{margin:0;color:var(--muted);font-size:13px}.columns{display:grid;grid-template-columns:minmax(0,2fr) 310px;align-items:start;gap:25px}.hero{background:#102c46;color:white;border-radius:10px;padding:26px 30px;min-height:260px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}.hero:after{content:"";position:absolute;right:-80px;top:-130px;width:400px;height:400px;border:65px solid rgba(69,199,178,.10);border-radius:50%;pointer-events:none}.hero .label{font-size:11px;font-weight:750;color:#8be0d1;letter-spacing:.1em}.hero h2{font-size:clamp(21px,2.6vw,29px);line-height:1.55;max-width:650px;margin:20px 0 14px;position:relative;z-index:1}.hero .foot{font-size:11px;color:#b7d1df;position:relative;z-index:1}.hero a{text-decoration:underline;text-underline-offset:4px}.section{margin:22px 0}.sectiontitle{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:10px}.sectiontitle h2{font-size:19px;margin:0}.sectiontitle small{font-size:12px;color:var(--muted)}.panel{background:#fff;border:1px solid var(--line);border-radius:9px;overflow:hidden}.ai{padding:18px 20px;background:#effaf7;border-left:4px solid #26b99f}.ai b{font-size:14px}.ai p{font-size:12px;color:#536977;margin:7px 0 0}.controls{display:flex;gap:8px;flex-wrap:wrap;padding:19px 18px 13px}.chip{border:1px solid #dae5e9;background:#fff;border-radius:20px;padding:7px 12px;font-size:12px;cursor:pointer;color:#40556a}.chip.active{background:#0c766f;color:white;border-color:#0c766f}.searchrow{display:flex;gap:9px;padding:0 18px 16px}input[type=search]{width:100%;min-width:0;padding:11px 13px;border-radius:6px;border:1px solid #d5e0e8;font-size:14px}.count{color:var(--muted);font-size:12px;margin:auto 0;white-space:nowrap}.item{display:flex;gap:16px;padding:18px;border-top:1px solid #edf0f3;align-items:flex-start}.thumb{width:88px;min-width:88px;height:82px;background:#e7f3f0;color:#168979;border-radius:7px;display:grid;place-items:center;font-size:28px}.thumb.policy{background:#ebf0f9;color:#5772a8}.thumb.employment{background:#f1f1fa;color:#7d70aa}.itembody{min-width:0;flex:1}.category{color:#087f72;font-size:11px;font-weight:800}.item h3{font-size:15px;line-height:1.55;margin:5px 0 7px}.meta{font-size:11px;color:#79889a}.desc{font-size:12px;color:#617487;margin:7px 0 0}.pager{display:flex;align-items:center;justify-content:center;gap:14px;padding:20px;border-top:1px solid var(--line)}.pager button{background:#fff;border:1px solid var(--line);padding:9px 14px;border-radius:6px;cursor:pointer}.pager button:disabled{opacity:.35;cursor:default}.pager span{font-size:12px;color:var(--muted)}.empty{padding:26px;color:var(--muted);font-size:13px}.side .panel{padding:20px;margin-bottom:17px}.side h3{margin:0 0 12px;font-size:17px}.side p{font-size:12px;color:var(--muted);margin:7px 0;line-height:1.8}.side a.rank{display:flex;gap:13px;border-top:1px solid #edf0f3;padding:12px 0;font-size:12px;line-height:1.6}.num{color:#0eae95;font-size:17px;font-weight:900}.ad{border:1px dashed #c5ced6;border-radius:8px;min-height:178px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:12px;color:#8b99a8;background:#edf1f4;margin-bottom:17px;font-size:13px}.ad small{font-size:10px;letter-spacing:.15em}.recruit{background:#102c46;color:white;border-radius:8px;padding:22px;margin-bottom:18px}.recruit h3{margin:0;font-size:19px}.recruit p{color:#c2d4df}.recruit .pillcta{margin-top:10px}.guides{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.guide{background:#fff;border:1px solid var(--line);padding:18px;border-radius:8px}.guide b{font-size:14px}.guide p{font-size:12px;color:var(--muted)}.guide .tag{font-size:11px;color:#0f8e7d;font-weight:800}.company{background:#102c46;color:#fff;border-radius:10px;margin:28px 0;padding:27px 30px;display:flex;justify-content:space-between;gap:20px;align-items:center}.company h2{margin:5px 0;font-size:21px}.company p{font-size:12px;color:#c4d5e0;margin:0}.footer{padding:28px 0 35px;color:#748394;font-size:11px;text-align:center}
 @media(max-width:850px){.columns{grid-template-columns:1fr}.side{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.side>*{margin-bottom:0!important}.side .panel:first-child{grid-column:span 2}.guides{grid-template-columns:1fr 1fr}}
 @media(max-width:580px){.mast .wrap{padding:17px 0}.logo{font-size:24px}.mast .pillcta{display:none}.ticker span:last-child{display:none}.intro{padding:24px 0 18px}.hero{padding:22px;min-height:240px}.item{gap:10px;padding:15px}.thumb{width:58px;min-width:58px;height:64px;font-size:22px}.item h3{font-size:14px}.side{grid-template-columns:1fr}.side .panel:first-child{grid-column:auto}.guides{grid-template-columns:1fr}.company{align-items:start;flex-direction:column}.count{display:none}}
+
+/* JINZAiQ ライトブルーテーマ */
+:root {
+  --green: #397FC4;
+  --bg: #F0F7FF;
+  --line: #D8E6F4;
+}
+
+body { background: #F0F7FF; }
+
+.ticker {
+  background: #E3F1FF;
+  border-bottom-color: #C7E1F9;
+}
+.tick, .chip.active {
+  background: #397FC4;
+  border-color: #397FC4;
+}
+.ai {
+  background: #EAF4FF;
+  border-left-color: #397FC4;
+}
+.pillcta {
+  background: #78B8F2;
+  color: #102C46;
+}
+.mark {
+  border-color: #89C8FF;
+  color: #89C8FF;
+}
+.logo i, .hero .label {
+  color: #94CFFF;
+}
+.thumb {
+  background: #E4F1FF;
+  color: #397FC4;
+}
+.category, .num, .guide .tag,
+.eyebrow, .navinner a:first-child {
+  color: #397FC4;
+}
+.navinner a:first-child {
+  border-bottom-color: #397FC4;
+}
 </style></head><body>
 <div class="top"><div class="wrap"><span>外国人材・特定技能・育成就労の情報メディア</span><span>外国人材のニュース・採用情報</span></div></div>
 <header class="mast"><div class="wrap"><div class="brand"><span class="mark">Q</span><div><div class="logo">JINZA<i>iQ</i></div><div class="sub">外国人材の「今」がわかる。採用の「次」が見える。</div></div></div><a class="pillcta" href="#consult">企業向け採用相談（準備中）</a></div></header>
