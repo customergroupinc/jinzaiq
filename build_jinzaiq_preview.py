@@ -154,34 +154,45 @@ function normalizeNewsTitle(title) {
 }
 
 // 2つの記事タイトルの類似度を比較
+
 function titleSimilarity(a, b) {
   const x = normalizeNewsTitle(a);
   const y = normalizeNewsTitle(b);
 
   if (x === y) return 1;
-  if (x.length < 18 || y.length < 18) return 0;
+  if (x.length < 12 || y.length < 12) return 0;
 
-  // 冒頭が大きく異なる記事は別の記事として扱う
-  if (x.slice(0, 12) !== y.slice(0, 12)) return 0;
-
-  const pairs = s => {
+  // タイトルを3文字ずつに分けて比較
+  function makePairs(s) {
     const result = new Set();
-    for (let i = 0; i < s.length - 1; i++) {
-      result.add(s.slice(i, i + 2));
+    for (let i = 0; i < s.length - 2; i++) {
+      result.add(s.slice(i, i + 3));
     }
     return result;
-  };
-
-  const aPairs = pairs(x);
-  const bPairs = pairs(y);
-  let common = 0;
-
-  for (const pair of aPairs) {
-    if (bPairs.has(pair)) common++;
   }
 
-  return (2 * common) / (aPairs.size + bPairs.size);
+  const setA = makePairs(x);
+  const setB = makePairs(y);
+
+  let common = 0;
+  for (const part of setA) {
+    if (setB.has(part)) common++;
+  }
+
+  const similarity =
+    (2 * common) / (setA.size + setB.size);
+
+  // 同じ組織名などで始まり、内容も似ている記事
+  const sameBeginning = x.slice(0, 5) === y.slice(0, 5);
+
+  if (sameBeginning && similarity >= 0.45) {
+    return 0.9;
+  }
+
+  // タイトル全体が非常によく似ている記事
+  return similarity >= 0.85 ? similarity : 0;
 }
+
 
 // 類似記事を除外して最新5件を選ぶ
 const uniqueNews = [];
