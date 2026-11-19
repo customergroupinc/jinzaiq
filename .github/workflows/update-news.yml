@@ -1,0 +1,49 @@
+name: JINZAiQ ニュース更新
+
+on:
+  schedule:
+    - cron: '0 21 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: jinzaiq-news-update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: リポジトリを取得
+        uses: actions/checkout@v4
+
+      - name: Pythonを準備
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 最新ニュースを収集
+        run: python collector.py --limit 0
+
+      - name: ニュース件数を確認
+        run: |
+          python -c "import sqlite3; c=sqlite3.connect('news.db'); n=c.execute('SELECT COUNT(*) FROM articles').fetchone()[0]; print('ニュース件数:',n); assert n > 0, 'ニュースが0件のため公開を中止します'"
+
+      - name: HTMLを生成
+        run: python build_jinzaiq_preview.py
+
+      - name: 公開用ファイルに変更
+        run: mv jinzaiq_hybrid_preview.html index.html
+
+      - name: 公開サイトを更新
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          if ! git diff --cached --quiet; then
+            git commit -m "JINZAiQ ニュース自動更新"
+            git push
+          fi
