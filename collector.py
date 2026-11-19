@@ -1,6 +1,5 @@
 """JINZAiQ RSS collector. No paid API calls."""
 import argparse
-import calendar
 import hashlib
 import html
 import sqlite3
@@ -14,7 +13,22 @@ from pathlib import Path
 BASE = Path(__file__).resolve().parent
 DB = BASE / "news.db"
 JST = timezone(timedelta(hours=9))
-SEARCH_TERMS = ["特定技能", "育成就労", "技能実習", "外国人雇用"]
+# 日本国内で外国人材を採用する企業向けに、制度・採用・定着を幅広く収集する。
+# 元の4語を残し、実務記事を拾う検索語を追加。RSS自体が検索結果を保証するものではない。
+SEARCH_TERMS = [
+    "特定技能",
+    "育成就労",
+    "技能実習",
+    "外国人雇用",
+    "外国人材 採用 企業",
+    "外国人材 人手不足",
+    "外国人材 定着 支援",
+    "外国人社員 研修",
+    "外国人材 受け入れ 事例",
+    "外国人採用 費用 手続き",
+    "在留資格 就労 企業",
+    "登録支援機関 企業",
+]
 CATEGORIES = {
     "育成就労": "育成就労",
     "特定技能": "特定技能",
@@ -56,6 +70,7 @@ def collect(limit=0, days=14):
     now = datetime.now(JST)
     cutoff = now - timedelta(days=days)
     found = {}
+    successful_feeds = 0
     for term in SEARCH_TERMS:
         query = urllib.parse.quote(f"{term} when:{days}d")
         url = f"https://news.google.com/rss/search?q={query}&hl=ja&gl=JP&ceid=JP:ja"
@@ -63,6 +78,7 @@ def collect(limit=0, days=14):
             req = urllib.request.Request(url, headers={"User-Agent": "JINZAiQ-demo/0.1"})
             with urllib.request.urlopen(req, timeout=15) as response:
                 root = ET.fromstring(response.read(2_000_000))
+            successful_feeds += 1
             for item in root.findall("./channel/item"):
                 title = html.unescape((item.findtext("title") or "").strip())
                 link = (item.findtext("link") or "").strip()
@@ -80,11 +96,12 @@ def collect(limit=0, days=14):
                                   "source": source, "published": when, "category": classify(canonical_title)}
         except Exception as exc:
             print(f"取得できませんでした ({term}): {type(exc).__name__}: {exc}")
+    # すべてのRSS取得が失敗した場合は、安全のためサイトの再生成を止める。
+    if successful_feeds == 0:
+        raise RuntimeError("すべてのニュースRSS取得に失敗しました。既存公開ページを維持するため更新を中止します。")
     entries = sorted(found.values(), key=lambda x: x["published"], reverse=True)
     if limit > 0:
         entries = entries[:limit]
-    if not found:
-        raise RuntimeError("ニュースを取得できなかったため、公開ページは更新しません。RSS接続を確認してください。")
     with connect() as con:
         before = con.total_changes
         # ニュースは公開日から指定期間だけ保持。過去データも整理する。
@@ -99,7 +116,7 @@ def collect(limit=0, days=14):
                  a["published"].isoformat(), a["category"], "", now.isoformat()))
         inserted = con.total_changes - before
         total = con.execute("SELECT COUNT(*) FROM articles WHERE id NOT LIKE 'demo-%'").fetchone()[0]
-    print(f"取得候補 {len(found)} 件 / 今回の処理対象 {len(entries)} 件")
+    print(f"RSS取得成功 {successful_feeds}/{len(SEARCH_TERMS)} / 取得候補 {len(found)} 件 / 今回の処理対象 {len(entries)} 件")
     print(f"新規保存 {inserted} 件 / 期限切れ削除 {deleted} 件 / 現在の保存件数 {total} 件")
     if not found:
         print("取得候補が0件です。RSSへの接続や検索条件を確認してください。")
