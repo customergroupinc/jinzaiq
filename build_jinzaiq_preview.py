@@ -15,6 +15,10 @@ HTML = r'''<!doctype html>
 <html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>JINZAiQ｜外国人材のニュース・採用情報</title>
 <meta name="description" content="外国人材の制度・採用・雇用に関するニュースを探せるJINZAiQです。">
+/* 記事一覧の左側の◇マークを非表示 */
+.item .thumb {
+  display: none;
+}
 <style>
 :root{--navy:#102c46;--ink:#193047;--muted:#64768a;--green:#18aa94;--line:#e0e7ed;--bg:#f3f6f9;--white:#fff}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--ink);background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans JP","Hiragino Kaku Gothic ProN",Meiryo,sans-serif;line-height:1.65}a{color:inherit;text-decoration:none}a:hover{color:#0a9584}.wrap{width:min(1160px,calc(100% - 36px));margin:auto}
