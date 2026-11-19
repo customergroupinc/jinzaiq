@@ -1,0 +1,80 @@
+"""JINZAiQ: SQLiteニュースを読み取り、単体で開けるHTMLプレビューを生成する。
+利用: /home/monta/jinzaiq/venv/bin/python /home/monta/jinzaiq/free_demo/build_jinzaiq_preview.py
+既存アプリ・DBの変更なし。OpenAI API呼び出しなし。
+"""
+import json
+import sqlite3
+from datetime import datetime, timezone, timedelta
+from pathlib import Path
+
+BASE = Path(__file__).resolve().parent
+DB = BASE / 'news.db'
+OUT = BASE / 'index.html'
+
+HTML = r'''<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>JINZAiQ｜外国人材のニュース・採用情報</title>
+<meta name="description" content="外国人材の制度・採用・雇用に関するニュースを探せるJINZAiQです。">
+<style>
+:root{--navy:#102c46;--ink:#193047;--muted:#64768a;--green:#18aa94;--line:#e0e7ed;--bg:#f3f6f9;--white:#fff}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--ink);background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans JP","Hiragino Kaku Gothic ProN",Meiryo,sans-serif;line-height:1.65}a{color:inherit;text-decoration:none}a:hover{color:#0a9584}.wrap{width:min(1160px,calc(100% - 36px));margin:auto}
+.top{background:#081f33;color:#c8d7e2;font-size:11px}.top .wrap{display:flex;justify-content:space-between;gap:12px;padding:7px 0}.mast{background:var(--navy);color:white}.mast .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:25px 0}.brand{display:flex;align-items:center;gap:13px}.mark{width:39px;height:39px;border:2px solid #61d9c7;border-radius:10px;display:grid;place-items:center;color:#61d9c7;font-weight:900;font-size:23px}.logo{font-weight:900;letter-spacing:.05em;font-size:29px;line-height:1.1}.logo i{font-style:normal;color:#5de0c9}.sub{font-size:12px;color:#cadce9;margin-top:6px}.pillcta{display:inline-block;border-radius:6px;background:#29c4ac;color:#08293d;padding:10px 17px;font-size:12px;font-weight:800}.nav{background:white;border-bottom:1px solid var(--line)}.navinner{display:flex;gap:25px;align-items:center;overflow-x:auto;white-space:nowrap;min-height:50px;font-size:13px;font-weight:750}.navinner a:first-child{color:#087f76;border-bottom:3px solid var(--green);padding:15px 0}.ticker{background:#e7f5f2;border-bottom:1px solid #c8e5e0}.ticker .wrap{display:flex;gap:13px;align-items:center;padding:10px 0;font-size:12px}.tick{background:var(--green);color:#fff;border-radius:3px;font-weight:850;padding:3px 8px}.ticker span:last-child{color:#597b78;margin-left:auto}
+.intro{padding:31px 0 23px;display:flex;align-items:end;justify-content:space-between;gap:18px}.eyebrow{letter-spacing:.13em;font-size:10px;color:#148779;font-weight:850}.intro h1{font-size:clamp(24px,3vw,34px);line-height:1.4;margin:7px 0}.intro p{margin:0;color:var(--muted);font-size:13px}.columns{display:grid;grid-template-columns:minmax(0,2fr) 310px;align-items:start;gap:25px}.hero{background:#102c46;color:white;border-radius:10px;padding:26px 30px;min-height:260px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}.hero:after{content:"";position:absolute;right:-80px;top:-130px;width:400px;height:400px;border:65px solid rgba(69,199,178,.10);border-radius:50%;pointer-events:none}.hero .label{font-size:11px;font-weight:750;color:#8be0d1;letter-spacing:.1em}.hero h2{font-size:clamp(21px,2.6vw,29px);line-height:1.55;max-width:650px;margin:20px 0 14px;position:relative;z-index:1}.hero .foot{font-size:11px;color:#b7d1df;position:relative;z-index:1}.hero a{text-decoration:underline;text-underline-offset:4px}.section{margin:22px 0}.sectiontitle{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:10px}.sectiontitle h2{font-size:19px;margin:0}.sectiontitle small{font-size:12px;color:var(--muted)}.panel{background:#fff;border:1px solid var(--line);border-radius:9px;overflow:hidden}.ai{padding:18px 20px;background:#effaf7;border-left:4px solid #26b99f}.ai b{font-size:14px}.ai p{font-size:12px;color:#536977;margin:7px 0 0}.controls{display:flex;gap:8px;flex-wrap:wrap;padding:19px 18px 13px}.chip{border:1px solid #dae5e9;background:#fff;border-radius:20px;padding:7px 12px;font-size:12px;cursor:pointer;color:#40556a}.chip.active{background:#0c766f;color:white;border-color:#0c766f}.searchrow{display:flex;gap:9px;padding:0 18px 16px}input[type=search]{width:100%;min-width:0;padding:11px 13px;border-radius:6px;border:1px solid #d5e0e8;font-size:14px}.count{color:var(--muted);font-size:12px;margin:auto 0;white-space:nowrap}.item{display:flex;gap:16px;padding:18px;border-top:1px solid #edf0f3;align-items:flex-start}.thumb{width:88px;min-width:88px;height:82px;background:#e7f3f0;color:#168979;border-radius:7px;display:grid;place-items:center;font-size:28px}.thumb.policy{background:#ebf0f9;color:#5772a8}.thumb.employment{background:#f1f1fa;color:#7d70aa}.itembody{min-width:0;flex:1}.category{color:#087f72;font-size:11px;font-weight:800}.item h3{font-size:15px;line-height:1.55;margin:5px 0 7px}.meta{font-size:11px;color:#79889a}.desc{font-size:12px;color:#617487;margin:7px 0 0}.pager{display:flex;align-items:center;justify-content:center;gap:14px;padding:20px;border-top:1px solid var(--line)}.pager button{background:#fff;border:1px solid var(--line);padding:9px 14px;border-radius:6px;cursor:pointer}.pager button:disabled{opacity:.35;cursor:default}.pager span{font-size:12px;color:var(--muted)}.empty{padding:26px;color:var(--muted);font-size:13px}.side .panel{padding:20px;margin-bottom:17px}.side h3{margin:0 0 12px;font-size:17px}.side p{font-size:12px;color:var(--muted);margin:7px 0;line-height:1.8}.side a.rank{display:flex;gap:13px;border-top:1px solid #edf0f3;padding:12px 0;font-size:12px;line-height:1.6}.num{color:#0eae95;font-size:17px;font-weight:900}.ad{border:1px dashed #c5ced6;border-radius:8px;min-height:178px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:12px;color:#8b99a8;background:#edf1f4;margin-bottom:17px;font-size:13px}.ad small{font-size:10px;letter-spacing:.15em}.recruit{background:#102c46;color:white;border-radius:8px;padding:22px;margin-bottom:18px}.recruit h3{margin:0;font-size:19px}.recruit p{color:#c2d4df}.recruit .pillcta{margin-top:10px}.guides{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.guide{background:#fff;border:1px solid var(--line);padding:18px;border-radius:8px}.guide b{font-size:14px}.guide p{font-size:12px;color:var(--muted)}.guide .tag{font-size:11px;color:#0f8e7d;font-weight:800}.company{background:#102c46;color:#fff;border-radius:10px;margin:28px 0;padding:27px 30px;display:flex;justify-content:space-between;gap:20px;align-items:center}.company h2{margin:5px 0;font-size:21px}.company p{font-size:12px;color:#c4d5e0;margin:0}.footer{padding:28px 0 35px;color:#748394;font-size:11px;text-align:center}
+@media(max-width:850px){.columns{grid-template-columns:1fr}.side{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.side>*{margin-bottom:0!important}.side .panel:first-child{grid-column:span 2}.guides{grid-template-columns:1fr 1fr}}
+@media(max-width:580px){.mast .wrap{padding:17px 0}.logo{font-size:24px}.mast .pillcta{display:none}.ticker span:last-child{display:none}.intro{padding:24px 0 18px}.hero{padding:22px;min-height:240px}.item{gap:10px;padding:15px}.thumb{width:58px;min-width:58px;height:64px;font-size:22px}.item h3{font-size:14px}.side{grid-template-columns:1fr}.side .panel:first-child{grid-column:auto}.guides{grid-template-columns:1fr}.company{align-items:start;flex-direction:column}.count{display:none}}
+</style></head><body>
+<div class="top"><div class="wrap"><span>外国人材・特定技能・育成就労の情報メディア</span><span>外国人材のニュース・採用情報</span></div></div>
+<header class="mast"><div class="wrap"><div class="brand"><span class="mark">Q</span><div><div class="logo">JINZA<i>iQ</i></div><div class="sub">外国人材の「今」がわかる。採用の「次」が見える。</div></div></div><a class="pillcta" href="#consult">企業向け採用相談（準備中）</a></div></header>
+<nav class="nav"><div class="wrap navinner"><a href="#latest">トップ</a><a href="#latest">最新ニュース</a><a href="#latest" data-nav-category="特定技能">特定技能</a><a href="#latest" data-nav-category="育成就労">育成就労</a><a href="#latest" data-nav-category="外国人雇用">外国人雇用</a><a href="#guides">採用ガイド</a><a href="#consult">採用相談</a></div></nav>
+<div class="ticker"><div class="wrap"><span class="tick">NEWS</span><span>収集済みの外国人材ニュースを表示中。最新情報はリンク先の元記事を確認してください。</span><span id="generatedAt"></span></div></div>
+<div class="wrap"><section class="intro"><div><div class="eyebrow">FOREIGN TALENT & BUSINESS NEWS</div><h1>外国人材の最新情報を、ビジネスの力に。</h1><p>ニュースで動向をつかむ。制度を理解する。採用の次の一手につなげる。</p></div></section>
+<div class="columns"><main><section class="hero"><div class="label">TOP STORY ／ 最新ニュース</div><div><h2 id="heroTitle">ニュースを読み込んでいます</h2><div class="foot" id="heroMeta"></div></div></section>
+<section class="section"><div class="ai"><b>JINZAiQについて</b><p>外国人材の採用・雇用に関するニュースをカテゴリー別に掲載しています。詳しい内容は各記事のリンクからご確認ください。</p></div></section>
+<section class="section" id="latest"><div class="sectiontitle"><h2>最新ニュース・トピックス</h2><small id="totalCount"></small></div><div class="panel"><div class="controls" id="categories"></div><div class="searchrow"><input type="search" id="search" placeholder="ニュースのタイトル・媒体名で検索" aria-label="ニュース検索"><span class="count" id="matchedCount"></span></div><div id="articles"></div><div class="pager"><button id="prev">← 前へ</button><span id="paging"></span><button id="next">次へ →</button></div></div></section>
+<section class="section" id="guides"><div class="sectiontitle"><h2>外国人採用 お役立ちガイド</h2><small>今後公開予定</small></div><div class="guides"><div class="guide"><span class="tag">制度・基本</span><h3>特定技能とは？</h3><p>企業向けの制度解説記事を作成予定。</p></div><div class="guide"><span class="tag">採用実務</span><h3>外国人採用の費用と手続き</h3><p>手続きの流れを解説予定。</p></div><div class="guide"><span class="tag">定着支援</span><h3>外国人社員の受入れ準備</h3><p>教育・生活支援の実務を紹介予定。</p></div></div></section></main>
+<aside class="side"><div class="panel"><h3>最新ニュース 5件</h3><div id="latestFive"></div></div><div class="recruit"><span class="eyebrow" style="color:#78d8c8">FOR BUSINESS</span><h3>外国人材の採用を<br>検討している企業様へ</h3><p>採用相談の窓口は今後設置予定。現段階ではフォーム送信や紹介は行いません。</p><a class="pillcta" href="#consult">ご相談案内（準備中）</a></div><div class="panel"><h3>JINZAiQについて</h3><p>外国人材のニュース・実務情報を整理する個人運営メディアの開発版です。出典の元記事リンクを掲載しています。</p></div></aside></div>
+<section class="company" id="consult"><div><div class="eyebrow" style="color:#7de1cd">FOREIGN TALENT RECRUITMENT</div><h2>外国人材の採用を検討している企業様へ</h2><p>企業向け採用相談窓口は公開準備中です。個人情報の送信機能はありません。</p></div><span class="pillcta">公開準備中</span></section></div>
+<footer class="footer">JINZAiQ ／ RSS記事の出典・リンクを掲載 ／ 個別ニュースの正確性は元記事でご確認ください</footer>
+<script>
+const rawNews=__ARTICLES_JSON__;
+const generatedAt=__GENERATED_JSON__;
+const news=rawNews.map(x=>({...x, title:String(x.title||''),source:String(x.source||''),category:String(x.category||'外国人雇用'),url:String(x.url||'')}));
+const cats=['すべて',...new Set(news.map(x=>x.category))];let selected='すべて';let page=1;const perPage=20;
+const $=s=>document.querySelector(s);
+function text(tag,txt,cls){const e=document.createElement(tag);if(cls)e.className=cls;e.textContent=txt;return e}
+function articleLink(x){const a=document.createElement('a');a.textContent=x.title;a.href=x.url||'#';if(x.url){a.target='_blank';a.rel='noopener noreferrer'}else{a.addEventListener('click',e=>e.preventDefault())}return a}
+function filtered(){const q=$('#search').value.trim().toLocaleLowerCase();return news.filter(x=>(selected==='すべて'||x.category===selected)&&(!q||(x.title+' '+x.source+' '+x.category).toLocaleLowerCase().includes(q)))}
+function render(){const hits=filtered();const pages=Math.max(1,Math.ceil(hits.length/perPage));page=Math.min(page,pages);const list=$('#articles');list.replaceChildren();for(const x of hits.slice((page-1)*perPage,page*perPage)){const row=text('article','','item');const thumb=text('div',x.category.includes('制度')||x.category.includes('技能')?'◇':'◈','thumb '+(x.category.includes('技能')?'policy':'employment'));row.append(thumb);const body=text('div','','itembody');body.append(text('div',x.category,'category'));const h=text('h3','');h.append(articleLink(x));body.append(h);body.append(text('div',[x.published.slice(0,16).replace('T',' '),x.source].filter(Boolean).join(' ・ '),'meta'));row.append(body);list.append(row)}if(!hits.length)list.append(text('div','該当するニュースが見つかりません。検索条件を変えてみてね。','empty'));$('#paging').textContent=`${page} / ${pages}ページ`;$('#prev').disabled=page===1;$('#next').disabled=page===pages;$('#matchedCount').textContent=`${hits.length}件`;$('#totalCount').textContent=`収集記事 ${news.length}件`}
+function setCategory(c){selected=c;page=1;document.querySelectorAll('[data-cat]').forEach(b=>b.classList.toggle('active',b.dataset.cat===c));render()}
+const chips=$('#categories');for(const c of cats){const btn=text('button',c,'chip');btn.type='button';btn.dataset.cat=c;btn.addEventListener('click',()=>setCategory(c));chips.append(btn)}
+$('#search').addEventListener('input',()=>{page=1;render()});$('#prev').addEventListener('click',()=>{page--;render();$('#latest').scrollIntoView()});$('#next').addEventListener('click',()=>{page++;render();$('#latest').scrollIntoView()});document.querySelectorAll('[data-nav-category]').forEach(a=>a.addEventListener('click',()=>setCategory(a.dataset.navCategory)));
+if(news.length){const x=news[0];const hero=$('#heroTitle');hero.replaceChildren(articleLink(x));$('#heroMeta').textContent=[x.category,x.source,x.published.slice(0,16).replace('T',' ')].filter(Boolean).join(' ・ ')}else{$('#heroTitle').textContent='まだニュースがありません';$('#heroMeta').textContent='collector.py を実行するとここに最新記事が表示されます'}
+const latest=$('#latestFive');for(let i=0;i<Math.min(news.length,5);i++){const a=document.createElement('a');a.className='rank';a.href=news[i].url||'#';if(news[i].url){a.target='_blank';a.rel='noopener noreferrer'}a.append(text('span',String(i+1).padStart(2,'0'),'num'));const box=text('span',news[i].title);box.append(text('div',news[i].category,'meta'));a.append(box);latest.append(a)}
+$('#generatedAt').textContent='最終更新：'+generatedAt+' JST';setCategory('すべて');
+</script></body></html>'''
+
+
+def main():
+    if not DB.is_file():
+        raise SystemExit(f'ニュースDBがありません: {DB}')
+    connection = sqlite3.connect(f'file:{DB}?mode=ro', uri=True)
+    connection.row_factory = sqlite3.Row
+    try:
+        articles = [dict(x) for x in connection.execute(
+            "SELECT title,url,source,published,category FROM articles WHERE id NOT LIKE 'demo-%' ORDER BY published DESC")]
+    except sqlite3.DatabaseError as exc:
+        raise SystemExit(f'記事の読み込みに失敗: {exc}') from exc
+    finally:
+        connection.close()
+    # JSONをHTML内に安全に埋め込む。タイトル等にHTMLタグがあってもコードとして動かさない。
+    def safe_json(obj):
+        return json.dumps(obj, ensure_ascii=False, separators=(',', ':')).replace('<', '\\u003c').replace('>', '\\u003e').replace('&', '\\u0026').replace('\u2028','\\u2028').replace('\u2029','\\u2029')
+    markup = HTML.replace('__ARTICLES_JSON__', safe_json(articles))
+    markup = markup.replace('__GENERATED_JSON__', safe_json(datetime.now(timezone(timedelta(hours=9))).strftime('%Y-%m-%d %H:%M')))
+    OUT.write_text(markup, encoding='utf-8')
+    print(f'公開HTML生成OK：{len(articles)}件 / {OUT}')
+    print('GitHub Actionsから更新できます。')
+
+
+if __name__ == '__main__':
+    main()
