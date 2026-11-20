@@ -51,17 +51,66 @@ body { background:#F0F7FF; }
 .topic-card .topic-empty{font-size:12px;color:#64768a;padding:8px 0}
 @media(max-width:850px){.topic-grid{grid-template-columns:1fr}}
 @media(min-width:581px) and (max-width:850px){.topic-card .topic-note{min-height:0}}
-/* 記事一覧の左側の◇マークを非表示 */
-.item .thumb {
-  display: none;
+
+/* 記事の装飾アイコンを非表示（PC・スマホ共通） */
+.item .thumb { display: none; }
+/* モバイル専用ニュースアプリ風UI。PC表示は従来どおり */
+.mobile-tabs { display:none; }
+@media (max-width: 580px) {
+  html { scroll-padding-top: 63px; }
+  body { background:#f3f7fc; }
+  .top,.nav,.ticker,.intro,.ai,.topic-section,.side,.guides,.company,.footer { display:none!important; }
+  .mast { background:#102c46; }
+  .mast .wrap { padding:14px 0 12px; }
+  .mast .logo { font-size:25px;letter-spacing:.02em; }
+  .mast .mark { height:32px;width:32px;border-radius:8px;font-size:19px; }
+  .mast .sub { font-size:10px;margin-top:3px; }
+  .wrap { width:100%; }
+  .columns { display:block; }
+  .mobile-tabs { display:flex;position:sticky;top:0;z-index:50;overflow-x:auto;overscroll-behavior-x:contain;white-space:nowrap;scrollbar-width:none;background:#fff;border-bottom:1px solid #dbe6f1;box-shadow:0 2px 8px rgba(16,44,70,.05);padding:0 9px;gap:2px; }
+  .mobile-tabs::-webkit-scrollbar{display:none;}
+  .mobile-tab { flex:none;appearance:none;border:0;border-bottom:3px solid transparent;background:transparent;color:#54687c;padding:14px 12px 12px;font-size:13px;font-weight:700;cursor:pointer; }
+  .mobile-tab.active { color:#2878c9;border-bottom-color:#2878c9; }
+  .mobile-feature-label { display:block;font-size:12px;color:#307fc9;font-weight:800;padding:16px 16px 8px; }
+  .hero { margin:0 12px 12px;min-height:0;padding:19px;border-radius:12px;gap:10px; }
+  .hero h2 { font-size:19px;line-height:1.5;margin:9px 0; }
+  .hero .foot { font-size:11px; }
+  .hero .label { font-size:10px; }
+  .section#latest { margin:0; }
+  #latest .sectiontitle { margin:0;background:#f3f7fc;padding:12px 16px 9px; }
+  #latest .sectiontitle h2 { font-size:16px; }
+  #latest .sectiontitle small { font-size:11px; }
+  #latest .panel { border:0;border-radius:0;background:#fff; }
+  #latest .controls { display:none; }
+  #latest .searchrow { padding:10px 14px 13px;background:#fff; }
+  #latest input[type=search] { font-size:16px;border-radius:9px;background:#f3f7fc;border-color:#dce7f2; }
+  #latest .item { padding:17px 16px;gap:0;border-top:1px solid #edf1f6; }
+  #latest .itembody { width:100%; }
+  #latest .item h3 { font-size:16px;line-height:1.55;margin:5px 0 9px;letter-spacing:.005em; }
+  #latest .item h3 a { text-decoration:none;color:#152f47; }
+  #latest .item .category { font-size:11px; }
+  #latest .meta { font-size:11px;line-height:1.5; }
+  #latest .pager { background:#fff; }
+  #latest .pager button { padding:11px 16px; }
+  .mobile-tabs:focus-within { outline-offset:-2px; }
 }
+@media (min-width:581px) { .mobile-feature-label { display:none; } }
+
 </style></head><body>
 <div class="top"><div class="wrap"><span>外国人材・特定技能・育成就労の情報メディア</span><span>外国人材のニュース・採用情報</span></div></div>
 <header class="mast"><div class="wrap"><div class="brand"><span class="mark">Q</span><div><div class="logo">JINZA<i>iQ</i></div><div class="sub">外国人材の「今」がわかる。採用の「次」が見える。</div></div></div><a class="pillcta" href="#consult">企業向け採用相談（準備中）</a></div></header>
 <nav class="nav"><div class="wrap navinner"><a href="#latest">トップ</a><a href="#latest">最新ニュース</a><a href="#latest" data-nav-category="特定技能">特定技能</a><a href="#latest" data-nav-category="育成就労">育成就労</a><a href="#latest" data-nav-category="外国人雇用">外国人雇用</a><a href="#guides">採用ガイド</a><a href="#consult">採用相談</a></div></nav>
+<nav class="mobile-tabs" aria-label="スマホ用ニュースカテゴリー">
+<button class="mobile-tab active" data-mobile-tab="すべて" aria-pressed="true">トップ</button>
+<button class="mobile-tab" data-mobile-tab="特定技能" aria-pressed="false">特定技能</button>
+<button class="mobile-tab" data-mobile-tab="育成就労" aria-pressed="false">育成就労</button>
+<button class="mobile-tab" data-mobile-tab="採用・雇用" aria-pressed="false">採用・雇用</button>
+<button class="mobile-tab" data-mobile-tab="教育・定着" aria-pressed="false">教育・定着</button>
+<button class="mobile-tab" data-mobile-tab="在留資格" aria-pressed="false">在留資格</button>
+</nav>
 <div class="ticker"><div class="wrap"><span class="tick">NEWS</span><span>収集済みの外国人材ニュースを表示中。最新情報はリンク先の元記事を確認してください。</span><span id="generatedAt"></span></div></div>
 <div class="wrap"><section class="intro"><div><div class="eyebrow">FOREIGN TALENT & BUSINESS NEWS</div><h1>外国人材の最新情報を、ビジネスの力に。</h1><p>ニュースで動向をつかむ。制度を理解する。採用の次の一手につなげる。</p></div></section>
-<div class="columns"><main><section class="hero"><div class="label">TOP STORY ／ 最新ニュース</div><div><h2 id="heroTitle">ニュースを読み込んでいます</h2><div class="foot" id="heroMeta"></div></div></section>
+<div class="columns"><main><span class="mobile-feature-label">注目ニュース</span><section class="hero"><div class="label">TOP STORY ／ 最新ニュース</div><div><h2 id="heroTitle">ニュースを読み込んでいます</h2><div class="foot" id="heroMeta"></div></div></section>
 <section class="section"><div class="ai"><b>JINZAiQについて</b><p>外国人材の採用・雇用に関するニュースをカテゴリー別に掲載しています。詳しい内容は各記事のリンクからご確認ください。</p></div></section>
 <section class="topic-section" aria-label="テーマ別ニュース">
   <div class="sectiontitle"><h2>テーマ別に読む</h2><small>採用担当者向けピックアップ</small></div>
@@ -82,10 +131,34 @@ const rawNews=__ARTICLES_JSON__;
 const generatedAt=__GENERATED_JSON__;
 const news=rawNews.map(x=>({...x, title:String(x.title||''),source:String(x.source||''),category:String(x.category||'外国人雇用'),url:String(x.url||'')}));
 const cats=['すべて',...new Set(news.map(x=>x.category))];let selected='すべて';let page=1;const perPage=20;
+let mobileSelected="すべて";
 const $=s=>document.querySelector(s);
 function text(tag,txt,cls){const e=document.createElement(tag);if(cls)e.className=cls;e.textContent=txt;return e}
 function articleLink(x){const a=document.createElement('a');a.textContent=x.title;a.href=x.url||'#';if(x.url){a.target='_blank';a.rel='noopener noreferrer'}else{a.addEventListener('click',e=>e.preventDefault())}return a}
-function filtered(){const q=$('#search').value.trim().toLocaleLowerCase();return news.filter(x=>(selected==='すべて'||x.category===selected)&&(!q||(x.title+' '+x.source+' '+x.category).toLocaleLowerCase().includes(q)))}
+function mobileMatches(x){
+  if(mobileSelected==='すべて')return true;
+  const t=x.title+' '+x.category;
+  if(mobileSelected==='採用・雇用')return /採用|雇用|人材確保|人手不足|人材紹介|マッチング|受け入れ|受入れ/.test(t);
+  if(mobileSelected==='教育・定着')return /教育|研修|日本語|定着|育成|支援|訓練/.test(x.title);
+  if(mobileSelected==='特定技能')return /特定技能/.test(t);
+  if(mobileSelected==='育成就労')return /育成就労/.test(t);
+  if(mobileSelected==='在留資格')return /在留資格|在留カード|就労ビザ/.test(t);
+  return true;
+}
+function filtered(){const q=$('#search').value.trim().toLocaleLowerCase();const mobile=matchMedia('(max-width: 580px)').matches;return news.filter(x=>(!mobile?(selected==='すべて'||x.category===selected):mobileMatches(x))&&(!q||(x.title+' '+x.source+' '+x.category).toLocaleLowerCase().includes(q)))}
+function selectMobileTab(value){
+  mobileSelected=value;page=1;
+  document.querySelectorAll('[data-mobile-tab]').forEach(btn=>{
+    const active=btn.dataset.mobileTab===value;
+    btn.classList.toggle('active',active);
+    btn.setAttribute('aria-pressed',String(active));
+  });
+  render();
+  if(value!=='すべて')document.querySelector('#latest').scrollIntoView({block:'start'});
+  else window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelectorAll('[data-mobile-tab]').forEach(btn=>btn.addEventListener('click',()=>selectMobileTab(btn.dataset.mobileTab)));
+window.addEventListener('resize',()=>{page=1;render()});
 function render(){const hits=filtered();const pages=Math.max(1,Math.ceil(hits.length/perPage));page=Math.min(page,pages);const list=$('#articles');list.replaceChildren();for(const x of hits.slice((page-1)*perPage,page*perPage)){const row=text('article','','item');const thumb=text('div',x.category.includes('制度')||x.category.includes('技能')?'◇':'◈','thumb '+(x.category.includes('技能')?'policy':'employment'));row.append(thumb);const body=text('div','','itembody');body.append(text('div',x.category,'category'));const h=text('h3','');h.append(articleLink(x));body.append(h);body.append(text('div',[x.published.slice(0,16).replace('T',' '),x.source].filter(Boolean).join(' ・ '),'meta'));row.append(body);list.append(row)}if(!hits.length)list.append(text('div','該当するニュースが見つかりません。検索条件を変えてみてね。','empty'));$('#paging').textContent=`${page} / ${pages}ページ`;$('#prev').disabled=page===1;$('#next').disabled=page===pages;$('#matchedCount').textContent=`${hits.length}件`;$('#totalCount').textContent=`収集記事 ${news.length}件`}
 function setCategory(c){selected=c;page=1;document.querySelectorAll('[data-cat]').forEach(b=>b.classList.toggle('active',b.dataset.cat===c));render()}
 const chips=$('#categories');for(const c of cats){const btn=text('button',c,'chip');btn.type='button';btn.dataset.cat=c;btn.addEventListener('click',()=>setCategory(c));chips.append(btn)}
