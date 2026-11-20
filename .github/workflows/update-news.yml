@@ -14,6 +14,7 @@ concurrency:
 
 jobs:
   update:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
 
     steps:
@@ -25,22 +26,46 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: 最新ニュースを収集
-        run: python collector.py --limit 0 --days 14 --retain-published
-
-      - name: ニュース件数を確認
-        run: |
-          python -c "import sqlite3; c=sqlite3.connect('news.db'); n=c.execute(\"SELECT COUNT(*) FROM articles WHERE id NOT LIKE 'demo-%'\").fetchone()[0]; print('ニュース件数:',n); assert n > 0, 'ニュースが0件のため公開を中止します'"
-
-      - name: HTMLを生成
-        run: python build_jinzaiq_preview.py
-
-      - name: 公開サイトを更新
+      - name: 最新のmainからニュースを生成して公開
+        shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add index.html
-          if ! git diff --cached --quiet; then
+
+          max_attempts=3
+          for ((attempt=1; attempt<=max_attempts; attempt++)); do
+            git fetch --no-tags origin refs/heads/main
+            base=$(git rev-parse FETCH_HEAD)
+            git switch --detach "$base"
+            echo "ニュース更新 ${attempt}/${max_attempts} (main: $base)"
+
+            # 各試行で最新の公開済みHTMLを基準に収集する。
+            rm -f news.db
+            python collector.py --limit 0 --days 14 --retain-published
+            python -c "import sqlite3; c=sqlite3.connect('news.db'); n=c.execute(\"SELECT COUNT(*) FROM articles WHERE id NOT LIKE 'demo-%'\").fetchone()[0]; print('ニュース件数:',n); assert n > 0, 'ニュースが0件のため公開を中止します'"
+            python build_jinzaiq_preview.py
+            git add -- index.html
+            if git diff --cached --quiet; then
+              echo "公開HTMLに変更はありません。"
+              exit 0
+            fi
             git commit -m "JINZAiQ ニュース自動更新"
-            git push
-          fi
+            generated_commit=$(git rev-parse HEAD)
+            if git push origin HEAD:refs/heads/main; then
+              exit 0
+            fi
+
+            git fetch --no-tags origin refs/heads/main
+            latest=$(git rev-parse FETCH_HEAD)
+            if [[ "$latest" == "$generated_commit" ]]; then
+              echo "生成したコミットは既にmainにあります。"
+              exit 0
+            fi
+            if [[ "$latest" == "$base" ]]; then
+              echo "::error::mainに変更がない状態でPushに失敗しました。上記のGitエラーを確認してください。"
+              exit 1
+            fi
+            echo "mainが更新されたため、最新の公開HTMLから再生成します。"
+          done
+          echo "::error::mainの更新が続いたため、${max_attempts}回でニュース更新を中止しました。"
+          exit 1
