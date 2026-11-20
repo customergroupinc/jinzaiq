@@ -2,6 +2,7 @@
 import argparse
 import hashlib
 import html
+import json
 import sqlite3
 import urllib.parse
 import urllib.request
@@ -12,6 +13,7 @@ from pathlib import Path
 
 BASE = Path(__file__).resolve().parent
 DB = BASE / "news.db"
+PUBLISHED_HTML = BASE / "index.html"
 JST = timezone(timedelta(hours=9))
 # 日本国内で外国人材を採用する企業向けに、制度・採用・定着を幅広く収集する。
 # 元の4語を残し、実務記事を拾う検索語を追加。RSS自体が検索結果を保証するものではない。
@@ -66,9 +68,39 @@ def parse_date(item):
         return None
 
 
-def collect(limit=0, days=14):
+def article_id(title):
+    return hashlib.sha256(title.casefold().encode("utf-8")).hexdigest()
+
+
+def load_published_articles(cutoff, latest):
+    # The published page is available on every Actions runner, even without news.db.
+    markup = PUBLISHED_HTML.read_text(encoding="utf-8")
+    marker = "<script>\nconst rawNews="
+    _, marker_found, payload = markup.partition(marker)
+    if not marker_found:
+        raise ValueError("公開HTMLの記事データが見つかりません。")
+    articles, end = json.JSONDecoder().raw_decode(payload)
+    if not isinstance(articles, list) or not payload[end:].startswith(";\nconst generatedAt="):
+        raise ValueError("公開HTMLの記事データの形式が正しくありません。")
+    retained = []
+    for article in articles:
+        title, url, source, category, published = (
+            article[key] for key in ("title", "url", "source", "category", "published")
+        )
+        if not all(isinstance(value, str) and value.strip() for value in (title, url, source, category, published)):
+            raise ValueError("公開HTMLに不完全な記事データがあります。")
+        when = datetime.fromisoformat(published)
+        if when.tzinfo is None:
+            raise ValueError("公開済み記事の公開日時にタイムゾーンがありません。")
+        if cutoff <= when <= latest:
+            retained.append(dict(article, id=article_id(title), published=when.astimezone(JST)))
+    return retained
+
+
+def collect(limit=0, days=14, retain_published=False):
     now = datetime.now(JST)
     cutoff = now - timedelta(days=days)
+    latest = now + timedelta(hours=1)
     found = {}
     successful_feeds = 0
     for term in SEARCH_TERMS:
@@ -83,13 +115,15 @@ def collect(limit=0, days=14):
                 title = html.unescape((item.findtext("title") or "").strip())
                 link = (item.findtext("link") or "").strip()
                 when = parse_date(item)
-                if not title or not link or when is None or not cutoff <= when <= now + timedelta(hours=1):
+                if not title or not link or when is None or not cutoff <= when <= latest:
                     continue
                 raw_source = item.find("source")
                 source = raw_source.text.strip() if raw_source is not None and raw_source.text else "Google ニュース"
                 # Don't use generated summaries or copy article text: source/link/title only.
                 canonical_title = title.rsplit(" - ", 1)[0].strip()
-                key = hashlib.sha256(canonical_title.casefold().encode("utf-8")).hexdigest()
+                if not canonical_title:
+                    continue
+                key = article_id(canonical_title)
                 existing = found.get(key)
                 if existing is None or when > existing["published"]:
                     found[key] = {"id": key, "title": canonical_title, "url": link,
@@ -99,9 +133,20 @@ def collect(limit=0, days=14):
     # すべてのRSS取得が失敗した場合は、安全のためサイトの再生成を止める。
     if successful_feeds == 0:
         raise RuntimeError("すべてのニュースRSS取得に失敗しました。既存公開ページを維持するため更新を中止します。")
+    if retain_published and not found:
+        raise RuntimeError("今回のRSSに有効な記事がありません。既存公開ページを維持します。")
     entries = sorted(found.values(), key=lambda x: x["published"], reverse=True)
     if limit > 0:
         entries = entries[:limit]
+    if retain_published:
+        previous = load_published_articles(cutoff, latest)
+        entries_by_id = {article["id"]: article for article in entries}
+        for article in previous:
+            current = entries_by_id.get(article["id"])
+            if current is None or article["published"] > current["published"]:
+                entries_by_id[article["id"]] = article
+        entries = list(entries_by_id.values())
+        print(f"掲載期間内の公開済み記事 {len(previous)} 件 / 新着と統合後 {len(entries)} 件")
     with connect() as con:
         before = con.total_changes
         # ニュースは公開日から指定期間だけ保持。過去データも整理する。
@@ -144,8 +189,9 @@ if __name__ == "__main__":
     parser.add_argument("--demo", action="store_true", help="ダミー記事を追加（通信なし）")
     parser.add_argument("--limit", type=int, default=0, help="0=制限なし（初期値）")
     parser.add_argument("--days", type=int, default=14, help="保持・取得期間（日数、初期値14）")
+    parser.add_argument("--retain-published", action="store_true", help="公開済みHTMLから掲載期間内の記事を引き継ぐ")
     args = parser.parse_args()
     if args.demo:
         demo()
     else:
-        collect(limit=max(0, args.limit), days=max(1, min(args.days, 90)))
+        collect(limit=max(0, args.limit), days=max(1, min(args.days, 90)), retain_published=args.retain_published)
