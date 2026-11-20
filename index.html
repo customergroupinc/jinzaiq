@@ -141,18 +141,31 @@ function domesticScore(x) {
   if (t.length>110) score-=3;
   return score;
 }
-// 日本の制度・採用関連が候補にあれば、その中から最重要の1件を選ぶ。
-if(news.length) {
-  const candidates=news.slice(0,80);
-  const suitable=candidates.filter(x=>domesticScore(x)>0&&!isForeignOnly(x));
-  const pool=suitable.length?suitable:candidates;
-  const feature=pool.reduce((best,item)=>domesticScore(item)>domesticScore(best)?item:best,pool[0]);
+// 公開日時のタイムゾーンを使い、閲覧時点からの経過時間で選ぶ。
+function selectTopStory(articles, now) {
+  const hour=60*60*1000;
+  const candidates=[];
+  for(const article of articles) {
+    if(!/(?:Z|[+-]\d{2}:\d{2})$/.test(article.published))continue;
+    const published=Date.parse(article.published);
+    const age=now-published;
+    if(!Number.isFinite(age)||age<0||age>7*24*hour)continue;
+    if(isForeignOnly(article)||isPromotionOrIncident(article))continue;
+    const score=domesticScore(article);
+    if(score>0)candidates.push({article,published,score,recent:age<=48*hour});
+  }
+  candidates.sort((a,b)=>Number(b.recent)-Number(a.recent)||b.score-a.score||b.published-a.published);
+  return candidates[0]?.article;
+}
+
+const feature=selectTopStory(news,Date.now());
+if(feature) {
   const hero=$('#heroTitle');hero.replaceChildren(articleLink(feature));
   hero.querySelector('a').title=feature.title;
   $('#heroMeta').textContent=[feature.category,feature.source,feature.published.slice(0,16).replace('T',' ')].filter(Boolean).join(' ・ ');
 }else {
-  $('#heroTitle').textContent='まだニュースがありません';
-  $('#heroMeta').textContent='最新ニュースを準備しています';
+  $('#heroTitle').textContent=news.length?'現在、該当する注目ニュースはありません':'まだニュースがありません';
+  $('#heroMeta').textContent=news.length?'記事は最新ニュース一覧からご覧ください':'最新ニュースを準備しています';
 }
 
 // 右サイドバーのみ同じ話題の連続掲載を抑える。DBもメイン一覧も削除しない。
