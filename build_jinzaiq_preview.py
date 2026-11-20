@@ -59,7 +59,7 @@ body { background:#F0F7FF; }
 @media(max-width:850px){
   .intro{padding:16px 0 8px}
   .intro .eyebrow,.intro p{display:none}
-  .intro h1{font-size:20px;margin:0}
+  .intro h1{font-size:18px;line-height:1.35;letter-spacing:-.02em;margin:0}
   #latest{margin:12px 0 20px}
   .navinner a{display:flex;align-items:center;min-height:44px}
   .ticker .wrap{flex-wrap:wrap;gap:4px 8px}
