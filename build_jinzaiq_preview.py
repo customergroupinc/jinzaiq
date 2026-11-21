@@ -19,9 +19,9 @@ HTML = r'''<!doctype html>
 :root{--navy:#102c46;--ink:#193047;--muted:#64768a;--green:#18aa94;--line:#e0e7ed;--bg:#f3f6f9;--white:#fff}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--ink);background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans JP","Hiragino Kaku Gothic ProN",Meiryo,sans-serif;line-height:1.65}a{color:inherit;text-decoration:none}a:hover{color:#0a9584}.wrap{width:min(1160px,calc(100% - 36px));margin:auto}
 .top{background:#081f33;color:#c8d7e2;font-size:11px}.top .wrap{display:flex;justify-content:space-between;gap:12px;padding:7px 0}.mast{background:var(--navy);color:white}.mast .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:25px 0}.brand{display:flex;align-items:center;gap:13px}.mark{width:39px;height:39px;border:2px solid #61d9c7;border-radius:10px;display:grid;place-items:center;color:#61d9c7;font-weight:900;font-size:23px}.logo{font-weight:900;letter-spacing:.05em;font-size:29px;line-height:1.1}.logo i{font-style:normal;color:#5de0c9}.sub{font-size:12px;color:#cadce9;margin-top:6px}.pillcta{display:inline-block;border-radius:6px;background:#29c4ac;color:#08293d;padding:10px 17px;font-size:12px;font-weight:800}.nav{background:white;border-bottom:1px solid var(--line)}.navinner{display:flex;gap:25px;align-items:center;overflow-x:auto;white-space:nowrap;min-height:50px;font-size:13px;font-weight:750}.navinner a:first-child{color:#087f76;border-bottom:3px solid var(--green);padding:15px 0}.ticker{background:#e7f5f2;border-bottom:1px solid #c8e5e0}.ticker .wrap{display:flex;gap:13px;align-items:center;padding:10px 0;font-size:12px}.tick{background:var(--green);color:#fff;border-radius:3px;font-weight:850;padding:3px 8px}.ticker span:last-child{color:#597b78;margin-left:auto}
-.intro{padding:31px 0 23px;display:flex;align-items:end;justify-content:space-between;gap:18px}.eyebrow{letter-spacing:.13em;font-size:10px;color:#148779;font-weight:850}.intro h1{font-size:clamp(24px,3vw,34px);line-height:1.4;margin:7px 0}.intro p{margin:0;color:var(--muted);font-size:13px}.columns{display:grid;grid-template-columns:minmax(0,2fr) 310px;align-items:start;gap:25px}.hero{background:#102c46;color:white;border-radius:10px;padding:26px 30px;min-height:260px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}.hero:after{content:"";position:absolute;right:-80px;top:-130px;width:400px;height:400px;border:65px solid rgba(69,199,178,.10);border-radius:50%;pointer-events:none}.hero .label{font-size:11px;font-weight:750;color:#8be0d1;letter-spacing:.1em}.hero h2{font-size:clamp(21px,2.6vw,29px);line-height:1.55;max-width:650px;margin:20px 0 14px;position:relative;z-index:1}.hero .foot{font-size:11px;color:#b7d1df;position:relative;z-index:1}.hero a{text-decoration:underline;text-underline-offset:4px}.section{margin:22px 0}.sectiontitle{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:10px}.sectiontitle h2{font-size:19px;margin:0}.sectiontitle small{font-size:12px;color:var(--muted)}.panel{background:#fff;border:1px solid var(--line);border-radius:9px;overflow:hidden}.ai{padding:18px 20px;background:#effaf7;border-left:4px solid #26b99f}.ai b{font-size:14px}.ai p{font-size:12px;color:#536977;margin:7px 0 0}.controls{display:flex;gap:8px;flex-wrap:wrap;padding:19px 18px 13px}.chip{border:1px solid #dae5e9;background:#fff;border-radius:20px;padding:7px 12px;font-size:12px;cursor:pointer;color:#40556a}.chip.active{background:#0c766f;color:white;border-color:#0c766f}.searchrow{display:flex;gap:9px;padding:0 18px 16px}input[type=search]{width:100%;min-width:0;padding:11px 13px;border-radius:6px;border:1px solid #d5e0e8;font-size:14px}.count{color:var(--muted);font-size:12px;margin:auto 0;white-space:nowrap}.item{display:flex;gap:16px;padding:18px;border-top:1px solid #edf0f3;align-items:flex-start}.thumb{width:88px;min-width:88px;height:82px;background:#e7f3f0;color:#168979;border-radius:7px;display:grid;place-items:center;font-size:28px}.thumb.policy{background:#ebf0f9;color:#5772a8}.thumb.employment{background:#f1f1fa;color:#7d70aa}.itembody{min-width:0;flex:1}.category{color:#087f72;font-size:11px;font-weight:800}.item h3{font-size:15px;line-height:1.55;margin:5px 0 7px}.meta{font-size:11px;color:#79889a}.desc{font-size:12px;color:#617487;margin:7px 0 0}.pager{display:flex;align-items:center;justify-content:center;gap:14px;padding:20px;border-top:1px solid var(--line)}.pager button{background:#fff;border:1px solid var(--line);padding:9px 14px;border-radius:6px;cursor:pointer}.pager button:disabled{opacity:.35;cursor:default}.pager span{font-size:12px;color:var(--muted)}.empty{padding:26px;color:var(--muted);font-size:13px}.side .panel{padding:20px;margin-bottom:17px}.side h3{margin:0 0 12px;font-size:17px}.side p{font-size:12px;color:var(--muted);margin:7px 0;line-height:1.8}.side a.rank{display:flex;gap:13px;border-top:1px solid #edf0f3;padding:12px 0;font-size:12px;line-height:1.6}.num{color:#0eae95;font-size:17px;font-weight:900}.ad{border:1px dashed #c5ced6;border-radius:8px;min-height:178px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:12px;color:#8b99a8;background:#edf1f4;margin-bottom:17px;font-size:13px}.ad small{font-size:10px;letter-spacing:.15em}.recruit{background:#102c46;color:white;border-radius:8px;padding:22px;margin-bottom:18px}.recruit h3{margin:0;font-size:19px}.recruit p{color:#c2d4df}.recruit .pillcta{margin-top:10px}.guides{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.guide{background:#fff;border:1px solid var(--line);padding:18px;border-radius:8px}.guide b{font-size:14px}.guide p{font-size:12px;color:var(--muted)}.guide .tag{font-size:11px;color:#0f8e7d;font-weight:800}.company{background:#102c46;color:#fff;border-radius:10px;margin:28px 0;padding:27px 30px;display:flex;justify-content:space-between;gap:20px;align-items:center}.company h2{margin:5px 0;font-size:21px}.company p{font-size:12px;color:#c4d5e0;margin:0}.footer{padding:28px 0 35px;color:#748394;font-size:11px;text-align:center}
+.intro{padding:31px 0 23px;display:flex;align-items:end;justify-content:space-between;gap:18px}.eyebrow{letter-spacing:.13em;font-size:10px;color:#148779;font-weight:850}.intro h1{font-size:clamp(24px,3vw,34px);line-height:1.4;margin:7px 0}.intro p{margin:0;color:var(--muted);font-size:13px}.columns{display:grid;grid-template-columns:minmax(0,2fr) 310px;align-items:start;gap:25px}.hero{background:#102c46;color:white;border-radius:10px;padding:26px 30px;min-height:260px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}.hero:after{content:"";position:absolute;right:-80px;top:-130px;width:400px;height:400px;border:65px solid rgba(69,199,178,.10);border-radius:50%;pointer-events:none}.hero .label{font-size:11px;font-weight:750;color:#8be0d1;letter-spacing:.1em}.hero h2{font-size:clamp(21px,2.6vw,29px);line-height:1.55;max-width:650px;margin:20px 0 14px;position:relative;z-index:1}.hero .foot{font-size:11px;color:#b7d1df;position:relative;z-index:1}.hero a{text-decoration:underline;text-underline-offset:4px}.section{margin:22px 0}.sectiontitle{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:10px}.sectiontitle h2{font-size:19px;margin:0}.sectiontitle small{font-size:12px;color:var(--muted)}.panel{background:#fff;border:1px solid var(--line);border-radius:9px;overflow:hidden}.ai{padding:18px 20px;background:#effaf7;border-left:4px solid #26b99f}.ai b{font-size:14px}.ai p{font-size:12px;color:#536977;margin:7px 0 0}.controls{display:flex;gap:8px;flex-wrap:wrap;padding:19px 18px 13px}.chip{border:1px solid #dae5e9;background:#fff;border-radius:20px;padding:7px 12px;font-size:12px;cursor:pointer;color:#40556a}.chip.active{background:#0c766f;color:white;border-color:#0c766f}.searchrow{display:flex;gap:9px;padding:0 18px 16px}input[type=search]{width:100%;min-width:0;padding:11px 13px;border-radius:6px;border:1px solid #d5e0e8;font-size:14px}.count{color:var(--muted);font-size:12px;margin:auto 0;white-space:nowrap}.item{display:flex;gap:16px;padding:18px;border-top:1px solid #edf0f3;align-items:flex-start}.itembody{min-width:0;flex:1}.category{color:#087f72;font-size:11px;font-weight:800}.item h3{font-size:15px;line-height:1.55;margin:5px 0 7px}.meta{font-size:11px;color:#79889a}.desc{font-size:12px;color:#617487;margin:7px 0 0}.pager{display:flex;align-items:center;justify-content:center;gap:14px;padding:20px;border-top:1px solid var(--line)}.pager button{background:#fff;border:1px solid var(--line);padding:9px 14px;border-radius:6px;cursor:pointer}.pager button:disabled{opacity:.35;cursor:default}.pager span{font-size:12px;color:var(--muted)}.empty{padding:26px;color:var(--muted);font-size:13px}.side .panel{padding:20px;margin-bottom:17px}.side h3{margin:0 0 12px;font-size:17px}.side p{font-size:12px;color:var(--muted);margin:7px 0;line-height:1.8}.side a.rank{display:flex;gap:13px;border-top:1px solid #edf0f3;padding:12px 0;font-size:12px;line-height:1.6}.num{color:#0eae95;font-size:17px;font-weight:900}.ad{border:1px dashed #c5ced6;border-radius:8px;min-height:178px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:12px;color:#8b99a8;background:#edf1f4;margin-bottom:17px;font-size:13px}.ad small{font-size:10px;letter-spacing:.15em}.recruit{background:#102c46;color:white;border-radius:8px;padding:22px;margin-bottom:18px}.recruit h3{margin:0;font-size:19px}.recruit p{color:#c2d4df}.recruit .pillcta{margin-top:10px}.guides{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.guide{background:#fff;border:1px solid var(--line);padding:18px;border-radius:8px}.guide b{font-size:14px}.guide p{font-size:12px;color:var(--muted)}.guide .tag{font-size:11px;color:#0f8e7d;font-weight:800}.company{background:#102c46;color:#fff;border-radius:10px;margin:28px 0;padding:27px 30px;display:flex;justify-content:space-between;gap:20px;align-items:center}.company h2{margin:5px 0;font-size:21px}.company p{font-size:12px;color:#c4d5e0;margin:0}.footer{padding:28px 0 35px;color:#748394;font-size:11px;text-align:center}
 @media(max-width:850px){.columns{grid-template-columns:1fr}.side{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.side>*{margin-bottom:0!important}.side .panel:first-child{grid-column:span 2}.guides{grid-template-columns:1fr 1fr}}
-@media(max-width:580px){.mast .wrap{padding:17px 0}.logo{font-size:24px}.mast .pillcta{display:none}.ticker span:last-child{display:none}.intro{padding:24px 0 18px}.hero{padding:22px;min-height:240px}.item{gap:10px;padding:15px}.thumb{width:58px;min-width:58px;height:64px;font-size:22px}.item h3{font-size:14px}.side{grid-template-columns:1fr}.side .panel:first-child{grid-column:auto}.guides{grid-template-columns:1fr}.company{align-items:start;flex-direction:column}.count{display:none}}
+@media(max-width:580px){.mast .wrap{padding:17px 0}.logo{font-size:24px}.mast .pillcta{display:none}.ticker span:last-child{display:none}.intro{padding:24px 0 18px}.hero{padding:22px;min-height:240px}.item{gap:10px;padding:15px}.item h3{font-size:14px}.side{grid-template-columns:1fr}.side .panel:first-child{grid-column:auto}.guides{grid-template-columns:1fr}.company{align-items:start;flex-direction:column}.count{display:none}}
 
 /* JINZAiQ ライトブルーテーマ（既存デザインを保持） */
 :root { --green:#397FC4; --bg:#F0F7FF; --line:#D8E6F4; }
@@ -32,7 +32,6 @@ body { background:#F0F7FF; }
 .pillcta { background:#78B8F2; color:#102C46; }
 .mark { border-color:#89C8FF; color:#89C8FF; }
 .logo i,.hero .label { color:#94CFFF; }
-.thumb { background:#E4F1FF; color:#397FC4; }
 .category,.num,.guide .tag,.eyebrow,.navinner a:first-child { color:#397FC4; }
 .navinner a:first-child { border-bottom-color:#397FC4; }
 /* トップ見出し3行制限 */
@@ -51,11 +50,6 @@ body { background:#F0F7FF; }
 .topic-card .topic-empty{font-size:12px;color:#64768a;padding:8px 0}
 @media(max-width:850px){.topic-grid{grid-template-columns:1fr}}
 @media(min-width:581px) and (max-width:850px){.topic-card .topic-note{min-height:0}}
-/* 記事一覧の左側の◇マークを非表示 */
-.item .thumb {
-  display: none;
-}
-
 @media(max-width:850px){
   .intro{padding:16px 0 8px}
   .intro .eyebrow,.intro p{display:none}
@@ -74,6 +68,11 @@ body { background:#F0F7FF; }
   .item .meta{font-size:13px;color:#536579;overflow-wrap:anywhere}
   .item .category{font-size:12px;color:#225e98}
   .pager button{min-height:44px}
+}
+@media(max-width:580px){
+  .item-cover{position:relative;flex:none;width:clamp(96px,26vw,112px);aspect-ratio:4/3;align-self:center;border-radius:8px;overflow:hidden;background:#eef5fc}
+  .item-cover img{display:block;width:100%;height:100%}
+  .item-cover span{position:absolute;bottom:4px;right:4px;padding:1px 4px;border-radius:3px;background:#fff;color:#374b60;font-size:9px;line-height:1.4}
 }
 </style></head><body>
 <div class="top"><div class="wrap"><span>外国人材・特定技能・育成就労の情報メディア</span><span>外国人材のニュース・採用情報</span></div></div>
@@ -107,6 +106,7 @@ const latestSection=$('#latest');
 const followingSection=latestSection.nextElementSibling;
 const main=latestSection.parentElement;
 const narrowScreen=window.matchMedia('(max-width: 850px)');
+const thumbnailScreen=window.matchMedia('(max-width: 580px)');
 function positionLatest(){
   main.insertBefore(latestSection,narrowScreen.matches ? main.firstElementChild : followingSection);
 }
@@ -115,7 +115,57 @@ narrowScreen.addEventListener('change',positionLatest);
 function text(tag,txt,cls){const e=document.createElement(tag);if(cls)e.className=cls;e.textContent=txt;return e}
 function articleLink(x){const a=document.createElement('a');a.textContent=x.title;a.href=x.url||'#';if(x.url){a.target='_blank';a.rel='noopener noreferrer'}else{a.addEventListener('click',e=>e.preventDefault())}return a}
 function filtered(){const q=$('#search').value.trim().toLocaleLowerCase();return news.filter(x=>(selected==='すべて'||x.category===selected)&&(!q||(x.title+' '+x.source+' '+x.category).toLocaleLowerCase().includes(q)))}
-function render(){const hits=filtered();const pages=Math.max(1,Math.ceil(hits.length/perPage));page=Math.min(page,pages);const list=$('#articles');list.replaceChildren();for(const x of hits.slice((page-1)*perPage,page*perPage)){const row=text('article','','item');const thumb=text('div',x.category.includes('制度')||x.category.includes('技能')?'◇':'◈','thumb '+(x.category.includes('技能')?'policy':'employment'));row.append(thumb);const body=text('div','','itembody');body.append(text('div',x.category,'category'));const h=text('h3','');h.append(articleLink(x));body.append(h);body.append(text('div',[x.published.slice(0,16).replace('T',' '),x.source].filter(Boolean).join(' ・ '),'meta'));row.append(body);list.append(row)}if(!hits.length)list.append(text('div','該当するニュースが見つかりません。検索条件を変えてみてね。','empty'));$('#paging').textContent=`${page} / ${pages}ページ`;$('#prev').disabled=page===1;$('#next').disabled=page===pages;$('#matchedCount').textContent=`${hits.length}件`;$('#totalCount').textContent=`収集記事 ${news.length}件`}
+const categoryImages=new Map([
+  ['特定技能','specified-skilled-worker.svg'],
+  ['育成就労','employment-for-skill-development.svg'],
+  ['技能実習','technical-intern-training.svg'],
+  ['在留資格','residence-status.svg'],
+  ['外国人雇用','employment.svg']
+]);
+function articleCover(article, file){
+  const link=articleLink(article);
+  link.className='item-cover';
+  link.setAttribute('aria-label',article.title+'（カテゴリイラストから記事を開く）');
+  const img=document.createElement('img');
+  img.alt='';
+  img.width=112;
+  img.height=84;
+  img.loading='lazy';
+  img.decoding='async';
+  // Preserve the reserved space on failure and leave the title link available.
+  img.addEventListener('error',()=>{link.style.visibility='hidden'},{once:true});
+  img.src='assets/news-categories/'+file;
+  link.replaceChildren(img,text('span','カテゴリ画像'));
+  return link;
+}
+function render(){
+  const hits=filtered();
+  const pages=Math.max(1,Math.ceil(hits.length/perPage));
+  page=Math.min(page,pages);
+  const list=$('#articles');
+  list.replaceChildren();
+  for(const article of hits.slice((page-1)*perPage,page*perPage)){
+    const row=text('article','','item');
+    const body=text('div','','itembody');
+    body.append(text('div',article.category,'category'));
+    const heading=text('h3','');
+    heading.append(articleLink(article));
+    body.append(heading);
+    const metadata=[article.published.slice(0,16).replace('T',' '),article.source].filter(Boolean);
+    body.append(text('div',metadata.join(' ・ '),'meta'));
+    row.append(body);
+    const file=categoryImages.get(article.category);
+    if(thumbnailScreen.matches&&file&&article.url)row.append(articleCover(article,file));
+    list.append(row);
+  }
+  if(!hits.length)list.append(text('div','該当するニュースが見つかりません。検索条件を変えてみてね。','empty'));
+  $('#paging').textContent=`${page} / ${pages}ページ`;
+  $('#prev').disabled=page===1;
+  $('#next').disabled=page===pages;
+  $('#matchedCount').textContent=`${hits.length}件`;
+  $('#totalCount').textContent=`収集記事 ${news.length}件`;
+}
+thumbnailScreen.addEventListener('change',render);
 function setCategory(c){
   selected=c;
   page=1;
