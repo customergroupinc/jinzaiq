@@ -5,6 +5,15 @@ on:
     # 06:07 / 12:07 / 18:07 JST
     - cron: '7 3,9,21 * * *'
   workflow_dispatch:
+    inputs:
+      trigger_source:
+        description: '実行元（手動または外部スケジューラー）'
+        required: false
+        default: manual
+        type: choice
+        options:
+          - manual
+          - cloudflare
 
 permissions:
   contents: write
@@ -71,8 +80,8 @@ jobs:
           echo "::error::mainの更新が続いたため、${max_attempts}回でニュース更新を中止しました。"
           exit 1
 
-      - name: スケジュール更新の成功をHealthchecks.ioに記録
-        if: ${{ success() && github.event_name == 'schedule' }}
+      - name: 定時更新の成功をHealthchecks.ioに記録
+        if: ${{ success() && (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.trigger_source == 'cloudflare')) }}
         continue-on-error: true
         env:
           HEALTHCHECKS_PING_URL: ${{ secrets.HEALTHCHECKS_PING_URL }}
@@ -90,11 +99,18 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           UPDATE_STATUS: ${{ job.status }}
+          TRIGGER_SOURCE: ${{ inputs.trigger_source || 'manual' }}
         shell: bash
         run: |
           case "$GITHUB_EVENT_NAME" in
-            schedule) trigger="自動" ;;
-            *) trigger="手動" ;;
+            schedule) trigger="GitHub定時" ;;
+            workflow_dispatch)
+              if [[ "$TRIGGER_SOURCE" == "cloudflare" ]]; then
+                trigger="Cloudflare定時"
+              else
+                trigger="手動"
+              fi ;;
+            *) trigger="その他" ;;
           esac
           case "$UPDATE_STATUS" in
             success) status="成功" ;;

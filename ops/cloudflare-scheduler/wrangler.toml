@@ -1,0 +1,8 @@
+name = "jinzaiq-news-scheduler"
+main = "worker.js"
+compatibility_date = "2026-11-22"
+workers_dev = false
+
+[triggers]
+# UTC: 03:07 / 09:07 / 21:07 = JST: 12:07 / 18:07 / 翌日06:07
+crons = ["7 3,9,21 * * *"]
