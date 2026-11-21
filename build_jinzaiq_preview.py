@@ -17,6 +17,14 @@ HTML = r'''<!doctype html>
 <meta name="description" content="外国人材の制度・採用・雇用に関するニュースを探せるJINZAiQです。">
 <meta name="google-site-verification" content="oBJDB616x7O9hhep3KMHUCxM_UrCAkPjMI5sApHdw88" />
 <link rel="canonical" href="https://customergroupinc.github.io/jinzaiq/">
+<!-- Google Analytics 4 (JINZAiQ) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XTHZ96ESM4"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-XTHZ96ESM4');
+</script>
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="JINZAiQ">
 <meta property="og:title" content="JINZAiQ｜外国人材のニュース・採用情報">
