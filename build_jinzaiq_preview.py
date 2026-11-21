@@ -15,6 +15,7 @@ HTML = r'''<!doctype html>
 <html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>JINZAiQ｜外国人材のニュース・採用情報</title>
 <meta name="description" content="外国人材の制度・採用・雇用に関するニュースを探せるJINZAiQです。">
+<meta name="google-site-verification" content="oBJDB616x7O9hhep3KMHUCxM_UrCAkPjMI5sApHdw88" />
 <link rel="canonical" href="https://customergroupinc.github.io/jinzaiq/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="JINZAiQ">
