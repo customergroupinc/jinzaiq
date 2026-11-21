@@ -141,13 +141,22 @@ function domesticScore(x) {
   if (t.length>110) score-=3;
   return score;
 }
+const hour=60*60*1000;
+function parseFeaturePublished(value) {
+  const date=/^(\d{4}-\d{2}-\d{2})T(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/.exec(value);
+  if(!date)return NaN;
+  const calendarDay=new Date(date[1]+'T00:00:00Z');
+  // Date.parse can normalize an impossible calendar date such as November 31.
+  if(!Number.isFinite(calendarDay.getTime())||calendarDay.toISOString().slice(0,10)!==date[1])return NaN;
+  return Date.parse(value);
+}
+
+const viewedAt=Date.now();
 // 公開日時のタイムゾーンを使い、閲覧時点からの経過時間で選ぶ。
 function selectTopStory(articles, now) {
-  const hour=60*60*1000;
   const candidates=[];
   for(const article of articles) {
-    if(!/(?:Z|[+-]\d{2}:\d{2})$/.test(article.published))continue;
-    const published=Date.parse(article.published);
+    const published=parseFeaturePublished(article.published);
     const age=now-published;
     if(!Number.isFinite(age)||age<0||age>7*24*hour)continue;
     if(isForeignOnly(article)||isPromotionOrIncident(article))continue;
@@ -158,7 +167,7 @@ function selectTopStory(articles, now) {
   return candidates[0]?.article;
 }
 
-const feature=selectTopStory(news,Date.now());
+const feature=selectTopStory(news,viewedAt);
 if(feature) {
   const hero=$('#heroTitle');hero.replaceChildren(articleLink(feature));
   hero.querySelector('a').title=feature.title;
@@ -211,24 +220,38 @@ function isPromotionOrIncident(x){
   return /セミナー|ウェビナー|講座|説明会|参加募集|開催のお知らせ|キャンペーン|無料Web|逮捕|窃盗|殺人|詐欺|容疑|ひき逃げ|酒酔い|送検|起訴/.test(x.title)
     || /PR TIMES/.test(x.source);
 }
-// 国内との関係が明確でない記事は特集枠では低く評価する。
+const employmentTopic=/特定技能|育成就労|技能実習|就労資格|外国人材|外国(?:人|籍).{0,10}(?:人材|雇用|採用|社員|労働者|就労|求人)/;
 const topicDefinitions=[
-  {id:'topicImportant',test:x=>/政府|法務省|厚生労働省|入管庁|有識者会議|閣議|運用方針|受入れ方針|受け入れ方針|政策|規制|自治体|制度改正/.test(x.title),minScore:18},
-  {id:'topicPolicy',test:x=>/特定技能|育成就労|在留資格|技能実習/.test(x.title)&&/改正|見直し|施行|制度|運用|方針|分野|受入れ|受け入れ|閣議/.test(x.title),minScore:12},
-  {id:'topicHiring',test:x=>/人材確保|採用|雇用|人手不足|受入れ|受け入れ|マッチング|就職|外国人材紹介/.test(x.title),minScore:4}
+  {id:'topicImportant',preferredHours:48,minScore:15,test:x=>employmentTopic.test(x.title)&&/政府|法務省|厚生労働省|入管庁|有識者会議|閣議|運用方針|受入れ方針|受け入れ方針|政策|規制|自治体|制度改正/.test(x.title)},
+  {id:'topicPolicy',preferredHours:7*24,minScore:10,test:x=>/特定技能|育成就労|在留資格|技能実習/.test(x.title)&&/改正|見直し|施行|制度の開始|運用|方針|分野追加|対象分野|要件|受入れ上限|受け入れ上限|閣議/.test(x.title)},
+  {id:'topicHiring',preferredHours:7*24,minScore:7,test:x=>employmentTopic.test(x.title)&&/採用|雇用|受け?入れ|受入開始|受入実績|辞令|入社|配属/.test(x.title)&&/企業|会社|法人|グループ|職場|施設|病院|工場|業界|採用事例|受入れ体制|受け入れ体制/.test(x.title)}
 ];
+
+function selectTopicArticles(articles, section, now, usedArticles) {
+  const candidates=[];
+  for(const article of articles){
+    const age=(now-parseFeaturePublished(article.published))/hour;
+    if(!Number.isFinite(age)||age<0||age>14*24)continue;
+    if(!section.test(article)||isPromotionOrIncident(article)||isForeignOnly(article))continue;
+    const relevance=domesticScore(article);
+    if(relevance<section.minScore)continue;
+    // 優先期間を先に使い、同じ期間内では公開から1日ごとに3点差し引く。
+    candidates.push({article,age,preferred:age<=section.preferredHours,score:relevance-3*age/24});
+  }
+  candidates.sort((a,b)=>Number(b.preferred)-Number(a.preferred)||b.score-a.score||a.age-b.age);
+  const selected=[];
+  for(const {article} of candidates){
+    if(usedArticles.some(other=>sameTopic(article,other))||selected.some(other=>sameTopic(article,other)))continue;
+    selected.push(article);
+    if(selected.length>=2)break;
+  }
+  return selected;
+}
+
 const usedTopicArticles=[];
 for(const section of topicDefinitions){
   const target=$('#'+section.id);
-  const candidates=news
-    .filter(x=>section.test(x)&&!isPromotionOrIncident(x)&&!isForeignOnly(x)&&domesticScore(x)>=section.minScore)
-    .sort((a,b)=>domesticScore(b)-domesticScore(a)); // 同点は元の新着順を保持
-  const selected=[];
-  for(const item of candidates){
-    if(usedTopicArticles.some(other=>sameTopic(item,other))||selected.some(other=>sameTopic(item,other)))continue;
-    selected.push(item);
-    if(selected.length>=2)break;
-  }
+  const selected=selectTopicArticles(news,section,viewedAt,usedTopicArticles);
   for(const item of selected){
     usedTopicArticles.push(item);
     const link=articleLink(item);
