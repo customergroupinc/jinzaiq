@@ -2,7 +2,8 @@ name: JINZAiQ ニュース更新
 
 on:
   schedule:
-    - cron: '0 21 * * *'
+    # 06:07 / 12:07 / 18:07 JST
+    - cron: '7 3,9,21 * * *'
   workflow_dispatch:
 
 permissions:
@@ -69,3 +70,41 @@ jobs:
           done
           echo "::error::mainの更新が続いたため、${max_attempts}回でニュース更新を中止しました。"
           exit 1
+
+      - name: スケジュール更新の成功をHealthchecks.ioに記録
+        if: ${{ success() && github.event_name == 'schedule' }}
+        continue-on-error: true
+        env:
+          HEALTHCHECKS_PING_URL: ${{ secrets.HEALTHCHECKS_PING_URL }}
+        shell: bash
+        run: |
+          if [[ -z "$HEALTHCHECKS_PING_URL" ]] ||
+             ! curl --fail --silent --output /dev/null --max-time 15 --url "$HEALTHCHECKS_PING_URL"; then
+            echo "::warning::Healthchecks.ioに更新成功を記録できませんでした。"
+            exit 1
+          fi
+
+      - name: ニュース更新結果をSlackに通知
+        if: ${{ success() || failure() }}
+        continue-on-error: true
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          UPDATE_STATUS: ${{ job.status }}
+        shell: bash
+        run: |
+          case "$GITHUB_EVENT_NAME" in
+            schedule) trigger="自動" ;;
+            *) trigger="手動" ;;
+          esac
+          case "$UPDATE_STATUS" in
+            success) status="成功" ;;
+            *) status="失敗" ;;
+          esac
+          run_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          payload=$(jq -nc --arg text "JINZAiQ ニュース更新（$trigger）: $status | <$run_url|実行ログ>" '{text: $text}')
+          if [[ -z "$SLACK_WEBHOOK_URL" ]] ||
+             ! curl --fail --silent --output /dev/null --max-time 15 \
+               --header 'Content-Type: application/json' --data "$payload" --url "$SLACK_WEBHOOK_URL"; then
+            echo "::warning::Slackにニュース更新結果を通知できませんでした。"
+            exit 1
+          fi
