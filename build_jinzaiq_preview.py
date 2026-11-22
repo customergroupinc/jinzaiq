@@ -42,7 +42,7 @@ HTML = r'''<!doctype html>
 
 /* JINZAiQ ライトブルーテーマ（既存デザインを保持） */
 :root { --green:#397FC4; --bg:#F0F7FF; --line:#D8E6F4; }
-body { background:#F0F7FF; }
+body { background:#FFFFFF; }
 .ticker { background:#E3F1FF; border-bottom-color:#C7E1F9; }
 .tick,.chip.active { background:#397FC4; border-color:#397FC4; }
 .ai { background:#EAF4FF; border-left-color:#397FC4; }
